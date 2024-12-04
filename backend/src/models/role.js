@@ -2,11 +2,9 @@ const mongoose = require('mongoose');
 
 // Định nghĩa schema cho Role
 const roleSchema = new mongoose.Schema({
-    role_name: { 
+    roleName: { 
         type: String, 
         required: true,
-        unique: true, 
-        trim: true    
     }
 });
 

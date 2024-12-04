@@ -1,9 +1,7 @@
 # Thư mục node_modules chứa các dependency cài đặt
 node_modules/
 # File chứa biến môi trường, thường lưu thông tin nhạy cảm như API keys, passwords
-.env
-.env.local
-.env.*.local
+
 # File log
 logs/
 *.log

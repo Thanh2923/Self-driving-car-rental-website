@@ -1,23 +1,37 @@
 const mongoose = require('mongoose');
 
-// Định nghĩa schema cho user
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
+const userSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    role_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true, 
+    }
+   
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  age: {
-    type: Number,
-    required: true
+  {
+    timestamps: true, // Thêm trường createdAt và updatedAt tự động
   }
-});
+);
 
-// Tạo model từ schema
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
