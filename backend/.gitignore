@@ -1,0 +1,31 @@
+# Thư mục node_modules chứa các dependency cài đặt
+node_modules/
+# File chứa biến môi trường, thường lưu thông tin nhạy cảm như API keys, passwords
+.env
+.env.local
+.env.*.local
+# File log
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Báo cáo lỗi
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Cache của ứng dụng
+.cache/
+.parcel-cache/
+dist/
+temp/
+.tmp/
+
+# Cache của npm và yarn
+.npm
+.yarn/cache
+# Thư mục build/output
+build/
+out/
+public/
