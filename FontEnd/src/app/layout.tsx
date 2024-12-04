@@ -35,9 +35,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
         <ScrollArea className="w-[100vw] h-[100vh]   border-r-[7px] border-r-yellow-600">
-          {/* <Header /> */}
+          <Header />
           {children}
-          {/* <Footer /> */}
+          <Footer />
         </ScrollArea>
       </body>
     </html>

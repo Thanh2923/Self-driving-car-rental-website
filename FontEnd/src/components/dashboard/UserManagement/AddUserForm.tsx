@@ -1,5 +1,5 @@
-// src/components/AddUserForm.js
-import React, { useState } from 'react';
+"use client"
+import  { useState } from 'react';
 
 const AddUserForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({

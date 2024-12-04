@@ -1,14 +1,22 @@
-// src/components/UserManagement.js
-import React, { useState, useEffect } from 'react';
+"use client"
+import { useState, useEffect } from 'react';
 import AddUserForm from './AddUserForm';
 import EditUserForm from './EditUserForm';
 import UserTable from './UserTable';
+import Pagination from '@/components/pagination/Pagination';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [showForm, setShowForm] = useState(false); // Trạng thái để hiển thị form
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 10; // Số lượng trang
 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
   useEffect(() => {
     // Dữ liệu mẫu để kiểm tra giao diện
     const sampleUsers = [
@@ -68,6 +76,13 @@ const UserManagement = () => {
       {/* Bảng hiển thị người dùng */}
       <div className="mb-6">
         <UserTable users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} />
+      </div>
+      <div className='pt-4'>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
       </div>
 
     

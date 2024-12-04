@@ -1,5 +1,5 @@
-// src/components/EditUserForm.js
-import React, { useState, useEffect } from 'react';
+"use client"
+import { useState, useEffect } from 'react';
 
 const EditUserForm = ({ user, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({

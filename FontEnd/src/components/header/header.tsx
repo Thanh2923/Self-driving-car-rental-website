@@ -13,7 +13,10 @@ import clsx from "clsx";
 import SignIn from "../sign-in/sign-in";
 import SignUp from "../sign-up/sign-up";
 import ForgetPassword from "../forgetPassword/forgetPassword";
+import { usePathname } from 'next/navigation';
 const Header = () => {
+  const pathname = usePathname();
+  const isAdminRoute = pathname.includes('/dashboard');
   const [isOpen, setIsOpen] = useState(true);
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
@@ -36,6 +39,11 @@ const Header = () => {
   const handleForgetPass = () => {
     setForgetPass(!forgetPass);
   };
+   
+  if(isAdminRoute){
+    return
+  }
+
   return (
     <>
       {forgetPass ? (

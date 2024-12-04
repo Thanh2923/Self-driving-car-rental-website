@@ -1,5 +1,4 @@
-// src/components/UserTable.js
-import React from 'react';
+"use client";
 
 const UserTable = ({ users, onEdit, onDelete }) => {
   return (
@@ -7,6 +6,7 @@ const UserTable = ({ users, onEdit, onDelete }) => {
       <table className="min-w-full table-auto">
         <thead className="bg-gray-100">
           <tr>
+            <th className="px-4 py-2 text-left">ID</th>
             <th className="px-4 py-2 text-left">Tên</th>
             <th className="px-4 py-2 text-left">Email</th>
             <th className="px-4 py-2 text-left">Mật khẩu</th>
@@ -17,12 +17,12 @@ const UserTable = ({ users, onEdit, onDelete }) => {
         <tbody>
           {users.map((user) => (
             <tr key={user._id} className="border-b">
+              <td className="px-4 py-2">{user._id}</td>
               <td className="px-4 py-2">{user.name}</td>
               <td className="px-4 py-2">{user.email}</td>
-              {/* Hiển thị mật khẩu như "******" hoặc giá trị nào đó thay vì mật khẩu thật */}
               <td className="px-4 py-2">******</td>
               <td className="px-4 py-2">{user.role}</td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 flex space-x-2">
                 <button
                   onClick={() => onEdit(user)}
                   className="px-4 py-2 bg-yellow-500 text-white rounded-md"
@@ -31,7 +31,7 @@ const UserTable = ({ users, onEdit, onDelete }) => {
                 </button>
                 <button
                   onClick={() => onDelete(user._id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md ml-2"
+                  className="px-4 py-2 bg-red-500 text-white rounded-md"
                 >
                   Xóa
                 </button>

@@ -1,6 +1,12 @@
-import React from "react";
+"use client"
 import WrapContainer from "../wrapContainer/wrapContainer";
+import { usePathname } from 'next/navigation';
 const Footer = () => {
+  const pathname = usePathname();
+  const isAdminRoute = pathname.includes('/dashboard');
+  if(isAdminRoute){
+    return
+  }
   return (
     <footer className="mt-10">
       <div className="bg-blue-600 h-[2px] w-full"></div>
