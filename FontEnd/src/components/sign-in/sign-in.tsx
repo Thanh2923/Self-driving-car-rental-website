@@ -5,6 +5,9 @@ import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form"; // Import react-hook-form
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 const SignIn = ({ handleSignIn }: { handleSignIn: () => void }) => {
   // Sử dụng useForm hook từ react-hook-form
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
@@ -23,14 +26,19 @@ const SignIn = ({ handleSignIn }: { handleSignIn: () => void }) => {
         }
       );
 
-      // Nếu gửi thành công, bạn có thể thực hiện các hành động như thông báo, điều hướng...
-      console.log("Đăng ký thành công:", response.data);
-
-      // Ví dụ: Bạn có thể hiển thị thông báo hoặc điều hướng đến trang khác
-      alert("Đăng ký thành công!");
+      toast.success("Đăng ký thành công")
+     
+    
     } catch (error) {
-      console.error("Đã xảy ra lỗi khi đăng ký:", error);
+     
+    // Kiểm tra xem lỗi có phải là từ server hay không và lấy thông báo từ backend
+    if (error.response && error.response.data) {
+      toast.error(`${error.response.data.message}`)
+      
+    } else {
+      // Nếu không có lỗi rõ ràng từ server
       alert("Đã xảy ra lỗi, vui lòng thử lại!");
+    }
     }
   };
 
@@ -43,6 +51,7 @@ const SignIn = ({ handleSignIn }: { handleSignIn: () => void }) => {
 
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000]  bg-black/50">
+     <ToastContainer/>
       <div className="w-[95%] mt-1 mx-auto  lg:mt-0 lg:w-[513px] lg:mx-auto  bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
         <CiCircleRemove
           onClick={handleRemoveSignIn}

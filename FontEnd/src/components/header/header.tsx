@@ -129,6 +129,7 @@ const Header = () => {
                       <Link
                         href=""
                         onClick={handleSignIn}
+                        
                         className="relative inline-block before:absolute before:left-0 before:bottom-0 before:w-full before:h-[2px] before:bg-black before:transform before:scale-x-0 hover:before:scale-x-100 before:transition-all before:duration-300 before:mt-2"
                       >
                         Đăng Kí

@@ -1,9 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import ForgetPassword from "../forgetPassword/forgetPassword";
+import { useForm } from "react-hook-form"; // Import react-hook-form
+import { signIn } from "next-auth/react";
+
+
 const SignUp = ({
   handleSignUp,
   handleShowSignIn,
@@ -13,20 +16,47 @@ const SignUp = ({
   handleSignUp: () => void;
   handleForgetPass: () => void;
 }) => {
+
+
+  
+  // Sử dụng useForm hook từ react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const handleRemoveSignIn = () => {
     handleSignUp();
   };
+
   const handleSignIn = () => {
     handleSignUp();
     handleShowSignIn();
   };
+
   const forgetPassword = () => {
     handleSignUp();
     handleForgetPass();
   };
+
+  // Handle form submission
+  const onSubmit = async(data: any) => {
+    const {email,password} = data
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    })
+
+    console.log(res)
+
+  };
+
+
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000] bg-black/50">
-      <div className="w-[95%] mt-3 mx-auto  lg:mt-10 lg:w-[513px] lg:mx-auto  bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
+      <div className="w-[95%] mt-3 mx-auto lg:mt-10 lg:w-[513px] lg:mx-auto bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
         <CiCircleRemove
           onClick={handleRemoveSignIn}
           className="ml-auto font-bold text-[1.25rem] cursor-pointer"
@@ -34,32 +64,56 @@ const SignUp = ({
         <div className="header-title">
           <h5 className="text-center font-bold text-[1.2rem]">Đăng nhập</h5>
         </div>
-        <form action="" className="flex flex-col gap-y-3">
+
+        {/* Form with react-hook-form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-3">
+          {/* Email Input */}
           <div className="flex flex-col gap-2">
-            <label
-              className="text-[#767676] font-semibold"
-              htmlFor="phoneNumber"
-            >
-              Số điện thoại
+            <label className="text-[#767676] font-semibold" htmlFor="email">
+              Email
             </label>
             <input
-              type="text"
+              {...register("email", {
+                required: "Email là bắt buộc",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Email không hợp lệ",
+                },
+              })}
+              type="email"
               className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
-              name="phoneNumber"
-              id="phoneNumber"
+              name="email"
+              id="email"
             />
+            {errors.email && (
+              <span className="text-red-500 text-xs">{errors.email.message}</span>
+            )}
           </div>
+
+          {/* Password Input */}
           <div className="flex flex-col gap-2">
             <label className="text-[#767676] font-semibold" htmlFor="password">
               Mật khẩu
             </label>
             <input
-              type="text"
+              {...register("password", {
+                required: "Mật khẩu là bắt buộc",
+                minLength: {
+                  value: 6,
+                  message: "Mật khẩu phải có ít nhất 6 ký tự",
+                },
+              })}
+              type="password"
               className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
               name="password"
               id="password"
             />
+            {errors.password && (
+              <span className="text-red-500 text-xs">{errors.password.message}</span>
+            )}
           </div>
+
+          {/* Forget Password Link */}
           <div className="forget-password">
             <p
               className="text-blue-600 ml-auto font-semibold hover:text-blue-700 duration-300 transition-all cursor-pointer"
@@ -68,11 +122,15 @@ const SignUp = ({
               Quên mật khẩu
             </p>
           </div>
+
+          {/* Submit Button */}
           <div className="submit-rental mt-3">
-            <button className="bg-blue-300 w-full hover:bg-blue-500/80 hover:text-white  transition-all text-blue-600 font-bold rounded-xl p-[12px] cursor-pointer">
+            <button className="bg-blue-300 w-full hover:bg-blue-500/80 hover:text-white transition-all text-blue-600 font-bold rounded-xl p-[12px] cursor-pointer">
               Đăng nhập
             </button>
           </div>
+
+          {/* SignUp/SignIn Toggle */}
           <div className="">
             <p className="flex items-center justify-center gap-3">
               <span className="text-[.9rem] text-slate-400">
@@ -86,12 +144,14 @@ const SignUp = ({
               </span>
             </p>
           </div>
+
+          {/* Social Login Buttons */}
           <div className="flex items-center mt-4 gap-3">
-            <button className="border-slate-300 flex items-center w-full border justify-evenly  hover:border-blue-500/90 duration-300 transition-all text-black opacity-95  hover:opacity-100 font-bold rounded-xl p-[12px] cursor-pointer">
+            <button className="border-slate-300 flex items-center w-full border justify-evenly hover:border-blue-500/90 duration-300 transition-all text-black opacity-95 hover:opacity-100 font-bold rounded-xl p-[12px] cursor-pointer">
               <FaFacebookF className="text-blue-500" />
               <span>Facebook</span>
             </button>
-            <button className="border-slate-300 border w-full flex items-center justify-evenly  hover:border-blue-500/90 duration-300 transition-all text-black opacity-95  hover:opacity-100 font-bold rounded-xl p-[12px] cursor-pointer">
+            <button className="border-slate-300 border w-full flex items-center justify-evenly hover:border-blue-500/90 duration-300 transition-all text-black opacity-95 hover:opacity-100 font-bold rounded-xl p-[12px] cursor-pointer">
               <FcGoogle />
               <span>Google</span>
             </button>
