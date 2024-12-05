@@ -13,15 +13,15 @@ const createCategory = async (req, res) => {
 
 // Lấy tất cả danh mục
 const getAllCategories = async (req, res) => {
+    const { page = 1, limit = 5 } = req.query;
     try {
-        const categories = await categoryService.getAllCategories();
+        const categories = await categoryService.getAllCategories(Number(page), Number(limit));
         return res.status(200).json(categories);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
 };
 
-// Lấy danh mục theo ID
 const getCategoryById = async (req, res) => {
     try {
         const id = req.params.id;
@@ -37,8 +37,9 @@ const getCategoryById = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        const data = req.body;
-        const updatedCategory = await categoryService.updateCategory(id, data);
+        const category_name = req.body;
+        console.log(id,category_name)
+        const updatedCategory = await categoryService.updateCategory(id,category_name);
         if (!updatedCategory) return res.status(404).json({ message: 'Category not found' });
         return res.status(200).json(updatedCategory);
     } catch (error) {
@@ -50,6 +51,7 @@ const updateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;
+        console.log(id)
         const deletedCategory = await categoryService.deleteCategory(id);
         if (!deletedCategory) return res.status(404).json({ message: 'Category not found' });
         return res.status(200).json({ message: 'Category deleted successfully' });
