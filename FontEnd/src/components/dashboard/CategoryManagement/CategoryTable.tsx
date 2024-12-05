@@ -1,6 +1,7 @@
 "use client";
 
 const CategoryTable = ({ categories, onEdit, onDelete }) => {
+  const safeCategories = categories ?? [];
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full table-auto">
@@ -12,9 +13,9 @@ const CategoryTable = ({ categories, onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {categories.map((category) => (
-            <tr key={category._id} className="border-b">
-              <td className="px-4 py-2">{category._id}</td>
+          {  safeCategories.map((category,index) => (
+            <tr key={index} className="border-b">
+              <td className="px-4 py-2">{index+1}</td>
               <td className="px-4 py-2">{category.category_name}</td>
               <td className="px-4 py-2">
                 <button
