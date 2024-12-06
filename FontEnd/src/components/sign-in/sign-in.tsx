@@ -8,7 +8,11 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 
-const SignIn = ({ handleSignIn }: { handleSignIn: () => void }) => {
+const SignIn = ({setSignIn,setSignUp, handleSignIn }: { 
+  setSignIn: () => void ,
+  setSignUp: () => void ,
+  handleSignIn: () => void 
+}) => {
   // Sử dụng useForm hook từ react-hook-form
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
@@ -27,7 +31,10 @@ const SignIn = ({ handleSignIn }: { handleSignIn: () => void }) => {
       );
 
       toast.success("Đăng ký thành công")
-     
+      setTimeout(()=>{
+        setSignIn()
+        setSignUp()
+      },2000)
     
     } catch (error) {
      

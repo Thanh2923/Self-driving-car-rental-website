@@ -1,4 +1,6 @@
 "use client";
+import { signOut } from "next-auth/react"
+
 import React, { useState } from "react";
 import WrapContainer from "../wrapContainer/wrapContainer";
 import Link from "next/link";
@@ -14,6 +16,8 @@ import SignIn from "../sign-in/sign-in";
 import SignUp from "../sign-up/sign-up";
 import ForgetPassword from "../forgetPassword/forgetPassword";
 import { usePathname } from 'next/navigation';
+import { useSession } from "next-auth/react"
+
 const Header = () => {
   const pathname = usePathname();
   const isAdminRoute = pathname.includes('/dashboard');
@@ -21,6 +25,7 @@ const Header = () => {
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [forgetPass, setForgetPass] = useState(false);
+  const { data: session } = useSession()
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
@@ -57,9 +62,10 @@ const Header = () => {
           handleSignUp={handleSignUp}
           handleShowSignIn={handleShowSignIn}
           handleForgetPass={handleForgetPass}
+          handleShowSignUp={handleShowSignUp}
         />
       ) : null}
-      {signIn ? <SignIn handleSignIn={handleSignIn} /> : null}
+      {signIn ? <SignIn setSignIn={handleShowSignIn} setSignUp={handleShowSignUp} handleSignIn={handleSignIn} /> : null}
       <section className="header relative w-[100%] z-[999] bg-blue-600">
         <WrapContainer className="px-5">
           <header className="flex items-center justify-between py-4">
@@ -89,8 +95,10 @@ const Header = () => {
                 Trở thành chủ xe
                 <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-all duration-300"></span>
               </Link>
-
-              <Link
+              {!session ? 
+              
+            <>
+             <Link
                 onClick={handleShowSignIn}
                 href=""
                 className="overflow-hidden relative  group text-white text-[1rem] px-[16px] py-[12px] hidden lg:block group motion-preset-bounce  lg:motion-delay-[600ms]"
@@ -105,6 +113,31 @@ const Header = () => {
               >
                 Đăng nhập
               </Link>
+            </> 
+            :
+             <ul className="relative group">
+  <Link
+          
+          href=""
+          className="text-white hover:text-white duration-300 transition-all text-[1rem] px-[16px] py-[12px] hidden border rounded-md lg:block relative overflow-hidden motion-preset-bounce  lg:motion-delay-[700ms]"
+        >
+          {session.user?.email}
+        </Link> 
+
+        <li className="absolute w-full mt-[2px] text-blue-500 top-[100%] bg-white left-0 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity  duration-300 ">
+        <Link
+          onClick={() => signOut()}
+          href=""
+          className="text-blue-500 hover:bg-white hover:text-blue-600 duration-300 transition-all text-[1rem] px-[16px] py-[12px] hidden border rounded-md lg:block relative overflow-hidden motion-preset-bounce  lg:motion-delay-[700ms]"
+        >
+          Đăng xuất
+        </Link> 
+
+        </li>
+             </ul>
+           
+            }
+             
               <IoMdMenu
                 className={clsx(
                   "text-white text-[1.7rem] cursor-pointer lg:hidden "
@@ -125,6 +158,8 @@ const Header = () => {
                 </div>
                 <div className="text-center mt-10">
                   <ul className="block">
+                   {!session ? 
+                  <>
                     <li className="py-5 text-[1.4rem] relative overflow-hidden">
                       <Link
                         href=""
@@ -144,6 +179,28 @@ const Header = () => {
                         Đăng nhập
                       </Link>
                     </li>
+                  </>  
+                  : 
+                  <ul className="relative group">
+                  <li className="py-5 text-[1.4rem] relative overflow-hidden">
+                    <Link
+                      href=""
+                      className="relative inline-block before:absolute before:left-0 before:bottom-0 before:w-full before:h-[2px] before:bg-black before:transform before:scale-x-0 hover:before:scale-x-100 before:transition-all before:duration-300 before:mt-2"
+                    >
+                      {session.user?.email}
+                    </Link>
+                  </li>
+                  <li className="py-5 text-[1.4rem] absolute top-5 left-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300 overflow-hidden z-10">
+                    <Link
+                      href=""
+                      className="relative inline-block before:absolute before:left-0 before:bottom-0 before:w-full before:h-[2px] before:bg-black before:transform before:scale-x-0 hover:before:scale-x-100 before:transition-all before:duration-300 before:mt-2"
+                    >
+                      {session.user?.email}
+                    </Link>
+                  </li>
+                </ul>
+                
+                  }
                     <li className="py-5 text-[1.4rem] relative overflow-hidden">
                       <Link
                         href="/about"
