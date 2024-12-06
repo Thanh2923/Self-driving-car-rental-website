@@ -22,8 +22,9 @@ const login = async (req, res) => {
 };
 
 const getAllUser = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
     try {
-        const users = await authService.getAllUser();
+        const users = await authService.getAllUser(Number(page), Number(limit));
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: error.message });

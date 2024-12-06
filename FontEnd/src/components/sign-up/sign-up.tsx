@@ -10,11 +10,13 @@ import { signIn } from "next-auth/react";
 const SignUp = ({
   handleSignUp,
   handleShowSignIn,
-  handleForgetPass
+  handleForgetPass,
+  handleShowSignUp
 }: {
   handleShowSignIn: () => void;
   handleSignUp: () => void;
   handleForgetPass: () => void;
+  handleShowSignUp: () => void;
 }) => {
 
 
@@ -49,8 +51,9 @@ const SignUp = ({
       password,
     })
 
-    console.log(res)
-
+    setTimeout(()=>{
+      handleShowSignUp();
+    },1000)
   };
 
 

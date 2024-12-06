@@ -50,8 +50,28 @@ const login = async (email, password) => {
   return { user, token };
 };
 
-const getAllUser = async () => {
-  return await User.find();
+const getAllUser = async (page = 1, limit = 5) => {
+  // Tính toán số lượng mục cần bỏ qua
+  const skip = (page - 1) * limit;
+
+  // Lấy danh sách users với phân trang và populate roleName từ Role
+  const users = await User.find()
+      .skip(skip) // Bỏ qua các mục trước trang hiện tại
+      .limit(limit) // Giới hạn số lượng mục trả về mỗi trang
+      .populate('role_id', 'roleName'); // Populate chỉ trường roleName từ Role
+
+  // Lấy tổng số lượng các user để tính tổng số trang
+  const totalUsers = await User.countDocuments();
+
+  // Tính tổng số trang
+  const totalPages = Math.ceil(totalUsers / limit);
+
+  return {
+      data: users,
+      totalUsers,
+      totalPages,
+      currentPage: page
+  };
 };
 
 module.exports = {
