@@ -3,19 +3,21 @@ import { useState, useEffect } from 'react';
 
 const EditUserForm = ({ user, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
-    role: 'khách hàng',
+    phone:'',
+    role_id: "",
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.name,
+        fullName: user.fullName,
         email: user.email,
-        password: '',
-        role: user.role,
+        password: user.password,
+        phone:user.phone,
+        role_id: user.role_id
       });
     }
   }, [user]);
@@ -30,7 +32,8 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({id: user._id,formData});
+   
   };
 
   return (
@@ -39,12 +42,12 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
     <form onSubmit={handleSubmit} className="space-y-4 w-[90%] ">
     <h2 className='py-5 font-semibold  text-lg '>Sửa người dùng</h2>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tên</label>
+        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Tên</label>
         <input
           type="text"
-          id="name"
-          name="name"
-          value={formData.name}
+          id="fullName"
+          name="fullName"
+          value={formData.fullName}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
@@ -77,17 +80,27 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
       </div>
 
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-gray-700">Vai trò</label>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Mật khẩu</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="role_id" className="block text-sm font-medium text-gray-700">Vai trò</label>
         <select
-          id="role"
-          name="role"
-          value={formData.role}
+          id="role_id"
+          name="role_id"
+          value={formData.role_id}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option value="khách hàng">Khách hàng</option>
-          <option value="tài xế">Tài xế</option>
-          <option value="admin">Admin</option>
+          <option value={formData.role_id}>{formData.role_id}</option>
         </select>
       </div>
 

@@ -19,8 +19,9 @@ const Navbar = () => {
 
 
   return (
-    <div className="w-1/5 bg-white shadow-md p-4">
-    <h1 className="text-2xl font-bold text-red-500 mb-6">3H1D ADMIN</h1>
+    <div className="w-1/5 h-full fixed top-0 left-0 bg-white shadow-md p-4">
+      
+    <h1 className="text-2xl font-bold  bg-red-100 px-5 py-5 text-red-500 mb-6">3H1D ADMIN</h1>
     <ul className="space-y-4">
    
     <li >

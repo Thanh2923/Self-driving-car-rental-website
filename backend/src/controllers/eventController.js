@@ -1,10 +1,9 @@
 const eventService = require('../services/eventService');
-
-// Tạo sự kiện mới
 const createEvent = async (req, res) => {
+    const { event_name, event_date, description } = req.body;
+    const image = req.file ? req.file.filename : null;
     try {
-        const data = req.body;
-        const newEvent = await eventService.createEvent(data);
+        const newEvent = await eventService.createEvent({image,event_name, event_date, description});
         return res.status(201).json(newEvent);
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -13,8 +12,9 @@ const createEvent = async (req, res) => {
 
 // Lấy tất cả sự kiện
 const getAllEvents = async (req, res) => {
+    const { page = 1, limit = 5 } = req.query;
     try {
-        const events = await eventService.getAllEvents();
+        const events = await eventService.getAllEvents(Number(page), Number(limit));
         return res.status(200).json(events);
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -35,10 +35,12 @@ const getEventById = async (req, res) => {
 
 // Cập nhật sự kiện
 const updateEvent = async (req, res) => {
+    const { event_name, event_date, description } = req.body;
+    const image = req.file ? req.file.filename : null;
+    const id = req.params.id;
     try {
-        const id = req.params.id;
-        const data = req.body;
-        const updatedEvent = await eventService.updateEvent(id, data);
+
+        const updatedEvent = await eventService.updateEvent(id, {event_name, event_date, description,image});
         if (!updatedEvent) return res.status(404).json({ message: 'Event not found' });
         return res.status(200).json(updatedEvent);
     } catch (error) {

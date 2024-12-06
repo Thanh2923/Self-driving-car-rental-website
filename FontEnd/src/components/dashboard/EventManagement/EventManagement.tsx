@@ -5,9 +5,14 @@ import AddEventForm from './AddEventForm';
 import EditEventForm from './EditEventForm';
 import EventTable from './EventTable';
 import Pagination from '@/components/pagination/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
+import { fetchEvents, updateEvent } from '@/redux/event/eventThunks';
 
 const EventManagement = () => {
-  const [events, setEvents] = useState([]);
+  const dispatch = useDispatch<AppDispatch>();
+ 
+  const { events, loading, error } = useSelector((state) => state.events);
   const [editingEvent, setEditingEvent] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState('');
@@ -20,32 +25,17 @@ const EventManagement = () => {
     }
   };
   useEffect(() => {
-    // Sample event data to test the interface
-    const sampleEvents = [
-      { _id: '1', event_name: 'Lễ hội Âm Nhạc', image: 'music.jpg', event_day: '2024-12-10', description: 'Một lễ hội âm nhạc với các ban nhạc sống.' },
-      { _id: '2', event_name: 'Triển lãm Nghệ thuật', image: 'art.jpg', event_day: '2024-12-15', description: 'Triển lãm giới thiệu các nghệ sĩ địa phương.' },
-    ];
-    setEvents(sampleEvents);
-  }, []);
+    dispatch(fetchEvents({ page: currentPage, limit: 5 }))
+  }, [dispatch,currentPage]);
 
   // Add a new event
-  const handleAddEvent = (eventData) => {
-    const newEvent = {
-      ...eventData,
-      _id: uuidv4(), // Generate a unique ID using UUID
-    };
-    setEvents([...events, newEvent]);
-    setShowForm(false);
-    setMessage('Sự kiện đã được thêm thành công!');
-  };
+
 
   // Update an existing event
-  const handleUpdateEvent = (updatedEvent) => {
-    setEvents(events.map((event) =>
-      event._id === updatedEvent._id ? updatedEvent : event
-    ));
-    setShowForm(false);
-    setMessage('Sự kiện đã được cập nhật thành công!');
+  const handleUpdateEvent = (updatedevent) => {
+      const {  id, event_name,image,event_date,description} = updatedevent;
+      dispatch(updateEvent({id, event_name,image,event_date,description}))
+      setShowForm(!showForm)
   };
 
   // Edit event
@@ -86,7 +76,7 @@ const EventManagement = () => {
           {editingEvent ? (
             <EditEventForm event={editingEvent} onSubmit={handleUpdateEvent} onCancel={handleCancelForm} />
           ) : (
-            <AddEventForm onSubmit={handleAddEvent} onCancel={handleCancelForm} />
+            <AddEventForm setShowForm={setShowForm}  onCancel={handleCancelForm} />
           )}
         </div>
       )}
@@ -96,7 +86,7 @@ const EventManagement = () => {
 
       {/* Event table */}
       <div className="mb-6">
-        <EventTable events={events} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+        <EventTable events={events.data} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
       </div>
       <div className='pt-4'>
       <Pagination
