@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Role = require('../models/role')
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../helpers/jwtHelper');
 
@@ -15,14 +16,16 @@ const register = async (userData) => {
 
   // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
   const hashedPassword = await bcrypt.hash(password, 10); // Sử dụng bcrypt để mã hóa mật khẩu với 10 vòng salt
-
+  // get role id by roleName ;
+  const roleId = await Role.findOne({ roleName: 'user' });
+  console.log(roleId._id)
   // Tạo người dùng mới với mật khẩu đã mã hóa
   const newUser = new User({
     fullName,
     password: hashedPassword,  // Lưu mật khẩu đã mã hóa
     phone,
     email,
-    role_id:"675071f404f4233c617bc6ec"
+    role_id:roleId._id,
   });
 
   // Lưu người dùng mới vào cơ sở dữ liệu
@@ -39,8 +42,10 @@ const login = async (email, password) => {
   if (!isMatch) throw new Error('Email hoặc mật khẩu không đúng.');
 
   // Tạo token với các thông tin chi tiết của người dùng
-  const token = generateToken(user._id, user.fullName, user.email, user.phone, user.role_id);
+  const getRoleName = await Role.findOne({_id : user.role_id});
+  console.log(getRoleName);
 
+  const token = generateToken(user._id, user.fullName, user.email, user.phone, getRoleName.roleName);
   // Trả về user và token, bao gồm cả role_id
   return { user, token };
 };

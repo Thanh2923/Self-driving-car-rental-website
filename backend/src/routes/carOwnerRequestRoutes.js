@@ -10,6 +10,13 @@ router.post(
 router.get(
   "/viewCarOwnerRequest",
   Middleware.verifyToken,
+  Middleware.verifyTokenRole(["admin"]),
   carOwnerRequest.ViewCarOwnerRequest
 );
+router.patch('/updateCarOwner/:id' ,
+ Middleware.verifyToken,
+ Middleware.verifyTokenRole(["admin"]),
+ carOwnerRequest.UpdateCarOwnerRequestStatus)
+
+ 
 module.exports = router;

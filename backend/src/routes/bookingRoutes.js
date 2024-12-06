@@ -3,6 +3,7 @@ const router = express.Router();
 const bookingController = require('../controllers/bookingController');
 
 // Routes CRUD cho Booking
+
 router.post('/', bookingController.createBooking); // Tạo booking
 router.get('/', bookingController.getAllBookings); // Lấy tất cả bookings
 router.get('/:id', bookingController.getBookingById); // Lấy booking theo ID
