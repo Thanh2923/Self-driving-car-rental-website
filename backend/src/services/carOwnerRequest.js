@@ -21,7 +21,27 @@ const getAllCarOwnerRequest = async () => {
   }
 };
 
+const getCarOwnerRequestById = async (id) => {
+    try {
+      return await CarOwnerRequest.findById(id);
+    }catch(err){
+        console.log(err);
+    throw Error(err.message);
+    }
+}
+const updateCarOwnerRequest = async (getUserOwner) => {
+    try {
+        const updateStatus = new CarOwnerRequest(getUserOwner)
+       return await updateStatus.save()
+    }catch(err){
+        console.log(err);
+        throw Error(err)
+    }
+}
+
 module.exports = {
   carOwnerRequests,
-  getAllCarOwnerRequest
+  getAllCarOwnerRequest,
+  getCarOwnerRequestById,
+  updateCarOwnerRequest
 };
