@@ -28,8 +28,9 @@ const carSchema = new mongoose.Schema({
     image: { 
         type: String, // URL hoặc đường dẫn hình ảnh
         trim: true 
-    }
-});
+    },
+    owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+},{ timestamps: true });
 
 // Tạo model từ schema
 const Car = mongoose.model('Car', carSchema);
