@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchUsers, addUser, updateUser, deleteUser } from './usersThunk';
 
 const initialState = {
-  users: [],
+  users: [],    // Mảng người dùng
   loading: false,
   error: null,
 };
@@ -20,24 +20,22 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload;
+        state.users = action.payload; // Gán dữ liệu trả về từ API cho users
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
-      // Add user
       .addCase(addUser.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(addUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.users.push(action.payload);
+        state.users.data.push(action.payload);
       })
       .addCase(addUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message ?? 'Unknown error';
       })
       // Update user
       .addCase(updateUser.pending, (state) => {
@@ -46,9 +44,9 @@ const usersSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.users.findIndex((user) => user.id === action.payload.id);
+        const index = state.users.data.findIndex((user) => user._id === action.payload.id); // Tìm người dùng theo ID (_id)
         if (index !== -1) {
-          state.users[index] = action.payload;
+          state.users.data[index] = action.payload; // Cập nhật thông tin người dùng
         }
       })
       .addCase(updateUser.rejected, (state, action) => {
@@ -62,7 +60,7 @@ const usersSlice = createSlice({
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = state.users.filter((user) => user.id !== action.payload);
+        state.users.data = state.users.data.filter((user) => user._id !== action.payload); // Lọc bỏ người dùng đã bị xóa
       })
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;

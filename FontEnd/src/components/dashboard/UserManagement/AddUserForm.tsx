@@ -1,12 +1,18 @@
 "use client"
-import  { useState } from 'react';
-
+import  { useState,useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRole } from "@/redux/role/roleThunk"; // Import fetchRoles từ redux
+import { RootState, AppDispatch } from "@/redux/store";
 const AddUserForm = ({ onSubmit, onCancel }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { roles, loading: rolesLoading } = useSelector((state: RootState) => state.roles);
+
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
-    role: 'khách hàng',
+    phone:'',
+    role_id: "",
   });
 
   const handleChange = (e) => {
@@ -22,18 +28,22 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
     onSubmit(formData);
   };
 
+  useEffect(() => {
+    dispatch(fetchRole()); // Fetch danh sách roles
+  }, [dispatch]);
+
   return (
    <div className='w-full fixed z-20 bg-slate-400  bg-opacity-20 flex h-screen top-0 left-0 justify-center items-center'>
     <div className='w-[50%] bg-white shadow-lg rounded-lg flex justify-center  '>
     <form onSubmit={handleSubmit} className="space-y-4 w-[90%]">
        <h2 className='py-5 font-semibold  text-lg '>Thêm mới người dùng</h2>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tên</label>
+        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Tên</label>
         <input
           type="text"
-          id="name"
-          name="name"
-          value={formData.name}
+          id="fullName"
+          name="fullName"
+          value={formData.fullName}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required
@@ -65,20 +75,42 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
           required
         />
       </div>
+      <div>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Mật khẩu</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        />
+      </div>
 
       <div>
         <label htmlFor="role" className="block text-sm font-medium text-gray-700">Vai trò</label>
         <select
-          id="role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        >
-          <option value="khách hàng">Khách hàng</option>
-          <option value="tài xế">Tài xế</option>
-          <option value="admin">Admin</option>
-        </select>
+              id="role"
+              name="role_id"
+              value={formData.role_id}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            >
+              <option value="" disabled>
+                Chọn vai trò
+              </option>
+              {rolesLoading ? (
+                <option>Đang tải...</option>
+              ) : (
+                roles.map((role,index) => (
+                  <option key={index} value={role.roleName}>
+                    {role.roleName}
+                  </option>
+                ))
+              )}
+            </select>
       </div>
 
       <div className="flex  py-5 justify-end space-x-4">

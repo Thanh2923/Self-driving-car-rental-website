@@ -2,13 +2,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Đọc baseURL từ môi trường
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
 
 // Fetch all users
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',
   async ({ page, limit }) => {
-    const response = await axios.get(`${baseURL}/auth/users`, {
+    const response = await axios.get(`${baseURL}/users`, {
       params: { page, limit },
     });
     return response.data;
@@ -27,8 +27,8 @@ export const addUser = createAsyncThunk(
 // Update an existing user
 export const updateUser = createAsyncThunk(
   'users/updateUser',
-  async ({ id, updatedUser }) => {
-    const response = await axios.put(`${baseURL}/users/${id}`, updatedUser);
+  async ({ id, formData }) => {
+    const response = await axios.put(`${baseURL}/users/${id}`, formData);
     return response.data;
   }
 );

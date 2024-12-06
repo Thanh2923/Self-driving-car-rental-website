@@ -37,7 +37,7 @@ export default function RootLayout(
       <body
         className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
-        <ScrollArea className="w-[100vw] h-[100vh]   border-r-[7px] border-r-yellow-600">
+        <ScrollArea className="w-full h-screen   border-r-[7px] border-r-yellow-600">
           <ReduxProvider>
           <Header />
           {children}

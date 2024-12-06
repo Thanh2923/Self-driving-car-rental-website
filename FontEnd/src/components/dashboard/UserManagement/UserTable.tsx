@@ -11,6 +11,7 @@ const UserTable = ({ users, onEdit, onDelete }) => {
             <th className="px-4 py-2 text-left">Tên</th>
             <th className="px-4 py-2 text-left">Email</th>
             <th className="px-4 py-2 text-left">Mật khẩu</th>
+            <th className="px-4 py-2 text-left">Phone</th>
             <th className="px-4 py-2 text-left">Vai trò</th>
             <th className="px-4 py-2 text-left">Hành động</th>
           </tr>
@@ -19,10 +20,11 @@ const UserTable = ({ users, onEdit, onDelete }) => {
           {safeUsers.map((user,index) => (
             <tr key={index} className="border-b">
               <td className="px-4 py-2">{index+1}</td>
-              <td className="px-4 py-2">{user.name}</td>
+              <td className="px-4 py-2">{user.fullName}</td>
               <td className="px-4 py-2">{user.email}</td>
               <td className="px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">{user.password}</td>
-              <td className="px-4 py-2">{user.role}</td>
+              <td className="px-4 py-2 ">{user.phone}</td>
+              <td className="px-4 py-2">{user.role_id}</td>
               <td className="px-4 py-2 flex space-x-2">
                 <button
                   onClick={() => onEdit(user)}

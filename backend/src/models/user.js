@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     role_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role',
+      type: String,
       required: true, 
     }
    
@@ -31,6 +32,26 @@ const userSchema = new mongoose.Schema(
     timestamps: true, // Thêm trường createdAt và updatedAt tự động
   }
 );
+
+// Middleware mã hóa mật khẩu khi lưu mới
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
+
+// Middleware mã hóa mật khẩu khi cập nhật
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  if (update.password) {
+    const salt = await bcrypt.genSalt(10);
+    update.password = await bcrypt.hash(update.password, salt);
+    this.setUpdate(update);
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 

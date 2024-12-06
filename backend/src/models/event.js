@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 // Định nghĩa schema cho Events
 const eventSchema = new mongoose.Schema({
+    image:{
+        type: String, 
+        required: true, 
+    },
     event_name: { 
         type: String, 
         required: true, 
@@ -15,12 +19,7 @@ const eventSchema = new mongoose.Schema({
         type: String, 
         trim: true 
     },
-    discount_percentage: { 
-        type: Number, 
-        required: true, 
-        min: 0, // Giảm giá phải >= 0
-        max: 100 // Giảm giá không vượt quá 100%
-    }
+    
 }, { timestamps: true }); // Tự động thêm createdAt và updatedAt
 
 // Tạo model từ schema

@@ -1,24 +1,18 @@
 "use client"
 import { useState } from 'react';
-
-const AddEventForm = ({ onSubmit, onCancel }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { addEvent } from '@/redux/event/eventThunks';
+const AddEventForm = ({setShowForm, onCancel }) => {
   const [event_name, setEventName] = useState('');
-  const [image, setImage] = useState('');
-  const [event_day, setEventDay] = useState('');
+  const [image, setImage] = useState(null);  // Khởi tạo là null, vì file sẽ được lưu ở đây
+  const [event_date, setEventDay] = useState('');
   const [description, setDescription] = useState('');
-
-  const handleSubmit = (e) => {
+  const dispatch = useDispatch();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (event_name.trim() && image.trim() && event_day.trim() && description.trim()) {
-      onSubmit({
-        event_name,
-        image,
-        event_day,
-        description
-      });
-    }
-  };
-
+    dispatch(addEvent({ event_name, image, event_date, description }))
+    setShowForm(false)
+  }
   return (
     <div className='w-full fixed z-20 bg-slate-400 bg-opacity-20 flex h-screen top-0 left-0 justify-center items-center'>
       <div className='w-[50%] bg-white flex justify-center shadow-lg rounded-lg'>
@@ -39,15 +33,13 @@ const AddEventForm = ({ onSubmit, onCancel }) => {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">URL Hình Ảnh</label>
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">Chọn Hình Ảnh</label>
             <input 
-              type="text" 
+              type="file" 
               id="image"
-              value={image} 
-              onChange={(e) => setImage(e.target.value)} 
-              placeholder="Nhập URL hình ảnh" 
+              onChange={(e) => setImage(e.target.files[0])} 
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
               required 
             />
@@ -55,11 +47,11 @@ const AddEventForm = ({ onSubmit, onCancel }) => {
 
           {/* Event Day */}
           <div>
-            <label htmlFor="event_day" className="block text-sm font-medium text-gray-700">Ngày Sự Kiện</label>
+            <label htmlFor="event_date" className="block text-sm font-medium text-gray-700">Ngày Sự Kiện</label>
             <input 
               type="date" 
-              id="event_day"
-              value={event_day} 
+              id="event_date"
+              value={event_date} 
               onChange={(e) => setEventDay(e.target.value)} 
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
               required 
