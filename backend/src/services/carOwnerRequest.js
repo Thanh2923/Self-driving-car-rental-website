@@ -1,5 +1,5 @@
 const CarOwnerRequest = require("../models/carOwnerRequest");
-
+const User = require("../models/user");
 const validatePhoneNumber = (phone) => {
   // Regex for Vietnamese phone numbers (starts with 0, 9-11 digits)
   const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
@@ -22,26 +22,38 @@ const getAllCarOwnerRequest = async () => {
 };
 
 const getCarOwnerRequestById = async (id) => {
-    try {
-      return await CarOwnerRequest.findById(id);
-    }catch(err){
-        console.log(err);
+  try {
+    return await CarOwnerRequest.findById(id);
+  } catch (err) {
+    console.log(err);
     throw Error(err.message);
-    }
-}
+  }
+};
+
 const updateCarOwnerRequest = async (getUserOwner) => {
-    try {
-        const updateStatus = new CarOwnerRequest(getUserOwner)
-       return await updateStatus.save()
-    }catch(err){
-        console.log(err);
-        throw Error(err)
-    }
-}
+  try {
+    const updateStatus = new CarOwnerRequest(getUserOwner);
+    return await updateStatus.save();
+  } catch (err) {
+    console.log(err);
+    throw Error(err);
+  }
+};
+
+const getEmail = async (userId) => {
+  try {
+    return await User.findOne({_id : userId });
+  } catch (err) {
+    console.log(err);
+    throw Error(err.message);
+  }
+};
+
 
 module.exports = {
   carOwnerRequests,
   getAllCarOwnerRequest,
   getCarOwnerRequestById,
-  updateCarOwnerRequest
+  updateCarOwnerRequest,
+  getEmail
 };
