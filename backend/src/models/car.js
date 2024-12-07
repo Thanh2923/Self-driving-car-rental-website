@@ -26,7 +26,7 @@ const carSchema = new mongoose.Schema({
         default: true // Mặc định xe khả dụng
     },
     image: { 
-        type: String, // URL hoặc đường dẫn hình ảnh
+        type: Array, // URL hoặc đường dẫn hình ảnh
         trim: true 
     },
     owner_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
