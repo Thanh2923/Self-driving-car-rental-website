@@ -33,6 +33,17 @@ const getRoleById = async (req, res) => {
     }
 };
 
+const getRoleNameById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const roleName = await roleService.getRoleById(id);
+        if (!roleName) return res.status(404).json({ message: 'Role not found' });
+        return res.status(200).json(roleName);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 // Cập nhật vai trò
 const updateRole = async (req, res) => {
     try {
@@ -63,5 +74,6 @@ module.exports = {
     getAllRoles,
     getRoleById,
     updateRole,
-    deleteRole
+    deleteRole,
+    getRoleNameById
 };

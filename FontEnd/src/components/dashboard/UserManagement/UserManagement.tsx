@@ -19,7 +19,7 @@ const UserManagement = () => {
   const [showForm, setShowForm] = useState(false); // Trạng thái hiển thị form
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Load users khi thay đổi trang
+  
   useEffect(() => {
     dispatch(fetchUsers({ page: currentPage, limit: 5 }));
   }, [currentPage, dispatch]);
@@ -31,13 +31,24 @@ const UserManagement = () => {
   };
 
   const handleAddUser = (userData: any) => {
-    console.log(userData)
     dispatch(addUser(userData))
-    setShowForm(false); // Ẩn form sau khi thêm
+   if(error !==null) {
+    toast.error(error)
+   }else{
+    toast.success("Thêm mới thành công")
+    setTimeout(()=>{
+      setShowForm(false);
+  },1000)
+   }
+  
   };
   const handleUpdateUserByid = (updateuser)=>{
     const { id, ...formData } = updateuser;
     dispatch(updateUser({id,formData}));
+    toast.success("Cập nhật thành công")
+    setTimeout(()=>{
+      setShowForm(false);
+  },1000)
   }
 
   const handleEditUser = (user: any) => {
@@ -71,6 +82,7 @@ const UserManagement = () => {
 
   return (
     <div className="p-6 bg-white">
+    
       <ToastContainer/>
         {showModal ?  <ActionDelete onDelete={handleDeleteUser} onClose={handleCancelFormDelete}/> : "" } 
       <h1 className="text-xl font-bold mb-4">Quản lý Người Dùng</h1>
@@ -101,13 +113,10 @@ const UserManagement = () => {
 
       {/* Bảng hiển thị người dùng */}
       <div className="mb-6">
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
+      
+  
           <UserTable users={users.data} onEdit={handleEditUser} onDelete={handleShowDeleteUser} />
-        )}
+        
       </div>
 
       {/* Phân trang */}
