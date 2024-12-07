@@ -54,7 +54,7 @@ export const updateEvent = createAsyncThunk(
 export const deleteEvent = createAsyncThunk(
   'events/deleteEvent',
   async (id) => {
-    await axios.delete(`${baseURL}/events/${id}`);
+    await axios.delete(`${baseURL}/event/${id}`);
     return id;
   }
 );

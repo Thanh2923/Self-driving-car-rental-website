@@ -24,18 +24,21 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message;
       })
       .addCase(addUser.pending, (state) => {
         state.loading = true;
       })
       .addCase(addUser.fulfilled, (state, action) => {
+        
+        const payload = action.payload.users
         state.loading = false;
-        state.users.data.push(action.payload);
+        state.users.data.push(payload);
       })
       .addCase(addUser.rejected, (state, action) => {
+      
         state.loading = false;
-        state.error = action.error.message ?? 'Unknown error';
+        state.error = action.payload?.message || 'Unknown error';
       })
       // Update user
       .addCase(updateUser.pending, (state) => {
@@ -43,15 +46,17 @@ const usersSlice = createSlice({
         state.error = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
+        const payload = action.payload.data
+        console.log(payload)
         state.loading = false;
-        const index = state.users.data.findIndex((user) => user._id === action.payload.id); // Tìm người dùng theo ID (_id)
+        const index = state.users.data.findIndex((user) => user._id === payload._id); // Tìm người dùng theo ID (_id)
         if (index !== -1) {
-          state.users.data[index] = action.payload; // Cập nhật thông tin người dùng
+          state.users.data[index] = payload; // Cập nhật thông tin người dùng
         }
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message;
       })
       // Delete user
       .addCase(deleteUser.pending, (state) => {
@@ -64,7 +69,7 @@ const usersSlice = createSlice({
       })
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message;
       });
   },
 });

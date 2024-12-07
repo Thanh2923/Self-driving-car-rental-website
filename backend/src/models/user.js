@@ -22,10 +22,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     role_id: {
-      ref: 'Role',
-      type: String,
-      required: true, 
-    }
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Role',  // Liên kết với bảng Role
+      required: true,
+    },
    
   },
   {
