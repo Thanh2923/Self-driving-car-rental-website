@@ -6,7 +6,6 @@ import { RootState, AppDispatch } from "@/redux/store";
 const AddUserForm = ({ onSubmit, onCancel }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { roles, loading: rolesLoading } = useSelector((state: RootState) => state.roles);
-
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',

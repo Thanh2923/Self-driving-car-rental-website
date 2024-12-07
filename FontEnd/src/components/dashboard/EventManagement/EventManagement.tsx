@@ -7,13 +7,16 @@ import EventTable from './EventTable';
 import Pagination from '@/components/pagination/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { fetchEvents, updateEvent } from '@/redux/event/eventThunks';
-
+import { deleteEvent, fetchEvents, updateEvent } from '@/redux/event/eventThunks';
+import ActionDelete from '../ActionDelete';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const EventManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
- 
+  const [showModal, setShowModal] = useState(false);
   const { events, loading, error } = useSelector((state) => state.events);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [eventToDelete, setEventToDelete] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,10 +47,18 @@ const EventManagement = () => {
     setShowForm(true);
   };
 
-  // Delete an event
-  const handleDeleteEvent = (eventId) => {
-    setEvents(events.filter((event) => event._id !== eventId));
-    setMessage('Sự kiện đã được xóa thành công!');
+
+  const handleDeleteUser = () => {
+    dispatch(deleteEvent(eventToDelete)); 
+    setShowModal(false);
+    toast.success("Xoá thành công")
+    setTimeout(()=>{
+      setShowModal(false);
+  },1000)
+  };
+
+  const handleCancelFormDelete = () => {
+    setShowModal(false);
   };
 
   // Cancel form
@@ -56,10 +67,16 @@ const EventManagement = () => {
     setEditingEvent(null);
   };
 
+  const handleShowDeleteEnvent = (id) => {
+    setEventToDelete(id)
+   setShowModal(true);
+ };
+
   return (
     <div className="p-6 bg-white">
       <h1 className="text-xl font-bold mb-4">Quản lý Sự Kiện</h1>
-
+      <ToastContainer/>
+      {showModal ?  <ActionDelete onDelete={handleDeleteUser} onClose={handleCancelFormDelete}/> : "" } 
       {/* Add event button */}
       <div className="my-3 text-right">
         <button
@@ -86,7 +103,7 @@ const EventManagement = () => {
 
       {/* Event table */}
       <div className="mb-6">
-        <EventTable events={events.data} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+        <EventTable events={events.data} onEdit={handleEditEvent} onDelete={handleShowDeleteEnvent} />
       </div>
       <div className='pt-4'>
       <Pagination

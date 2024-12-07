@@ -13,6 +13,12 @@ const getRoleById = async (id) => {
     return await Role.findById(id);
 };
 
+
+const getRoleNameById = async (id) => {
+    const role = await Role.findById(id);
+    return role.roleName
+};
+
 const updateRole = async (id, data) => {
     return await Role.findByIdAndUpdate(id, data, { new: true });
 };
@@ -26,5 +32,6 @@ module.exports = {
     getAllRoles,
     getRoleById,
     updateRole,
-    deleteRole
+    deleteRole,
+    getRoleNameById
 };

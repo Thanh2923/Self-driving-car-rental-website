@@ -19,7 +19,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 dist/
 temp/
 .tmp/
-
+# env files (can opt-in for committing if needed)
+.env
 # Cache của npm và yarn
 .npm
 .yarn/cache
