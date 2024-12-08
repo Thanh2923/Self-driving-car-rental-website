@@ -29,14 +29,22 @@ const register = async (userData) => {
   return await newUser.save();
 };
 
- const getUserByEmail = async (email) => {
-    return await User.findOne({ email });
-  }
+const login = async (email, password) => {
+  const user = await User.findOne({ email:email});
+  if (!user) throw new Error('Email hoặc mật khẩu không đúng.');
 
-  const getRoleByRoleId = async (role_id) => {
-    return await Role.findById({_id: role_id });
-  }
+  
+  const isMatch = await bcrypt.compare(password,user.password);
+  console.log(isMatch)
+  if (!isMatch) throw new Error('Email hoặc mật khẩu không đúng.');
+ 
+  const getRoleName = await Role.findOne({ _id: user.role_id });
+  console.log(getRoleName);
 
+  const token = generateToken(user._id, user.fullName, user.email, user.phone, getRoleName.roleName);
+  // Trả về user và token, bao gồm cả role_id
+  return { user, token };
+};
 
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua
@@ -124,8 +132,7 @@ const addUser = async (userData) => {
 
 module.exports = {
   register,
-  getUserByEmail,
-  getRoleByRoleId,
+  login,
   getAllUser,
   getUserById,
   updateUser,
