@@ -11,14 +11,16 @@ const createBooking = async (req, res) => {
     if (!checkCarId) {
       return res.status(404).json({ message: "Car not found" });
     }
-        // Tính số ngày thuê xe
-        const startDate = new Date(data.start_date);
-        const endDate = new Date(data.end_date);
-        const rentalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Chênh lệch ngày
-    
-        if (rentalDays <= 0) {
-          return res.status(400).json({ message: "End date must be after start date" });
-        }
+    // Tính số ngày thuê xe
+    const startDate = new Date(data.start_date);
+    const endDate = new Date(data.end_date);
+    const rentalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Chênh lệch ngày
+
+    if (rentalDays <= 0) {
+      return res
+        .status(400)
+        .json({ message: "End date must be after start date" });
+    }
     // get price car rental
     const price = await bookingService.getPriceCar(data.car_id);
     console.log(price);
@@ -44,7 +46,13 @@ const createBooking = async (req, res) => {
 // Lấy danh sách tất cả bookings
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await bookingService.getAllBookings();
+    const userBooking = req.user.userId;
+    const bookings = await bookingService.getAllBookings(userBooking);
+    if (!bookings || bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found . Please booking a car first" });
+    }
     return res.status(200).json(bookings);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -55,7 +63,8 @@ const getAllBookings = async (req, res) => {
 const getBookingById = async (req, res) => {
   try {
     const id = req.params.id;
-    const booking = await bookingService.getBookingById(id);
+    const userId = req.user.userId;
+    const booking = await bookingService.getBookingById(id, userId);
     if (!booking) return res.status(404).json({ message: "Booking not found" });
     return res.status(200).json(booking);
   } catch (error) {
@@ -68,7 +77,32 @@ const updateBooking = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-    const updatedBooking = await bookingService.updateBooking(id, data);
+    const userId = req.user.userId;
+
+    let totalPrice = null;
+
+    if (data.start_date && data.end_date) {
+      // Tính số ngày thuê xe
+      const startDate = new Date(data.start_date);
+      const endDate = new Date(data.end_date);
+      const rentalDays = Math.ceil(
+        (endDate - startDate) / (1000 * 60 * 60 * 24)
+      ); // Chênh lệch ngày
+
+      if (rentalDays <= 0) {
+        return res
+          .status(400)
+          .json({ message: "End date must be after start date" });
+      }
+
+      // get price by car_id ;
+      const price = await bookingService.getPriceCar(data.car_id);
+      // Tính tổng tiền thuê xe
+      totalPrice = rentalDays * price.price_per_day;
+    }
+    const updateData = { ...data, user_id: userId, total_price: totalPrice };
+    const updatedBooking = await bookingService.updateBooking(id, updateData);
+
     if (!updatedBooking)
       return res.status(404).json({ message: "Booking not found" });
     return res.status(200).json(updatedBooking);
@@ -79,7 +113,7 @@ const updateBooking = async (req, res) => {
 
 // Xóa booking
 const deleteBooking = async (req, res) => {
-  try {
+  try { 
     const id = req.params.id;
     const deletedBooking = await bookingService.deleteBooking(id);
     if (!deletedBooking)

@@ -8,7 +8,8 @@ const paymentRoutes = require("./paymentRoutes");
 const eventRoutes = require("./eventRoutes");
 const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
-const carOwnerRouter = require('./carOwnerRequestRoutes')
+const carOwnerRouter = require("./carOwnerRequestRoutes");
+const ownerRouter = require("./ownerRouter");
 // Định nghĩa các route
 
 router.use("/role", roleRoutes);
@@ -19,5 +20,6 @@ router.use("/payment", paymentRoutes);
 router.use("/event", eventRoutes);
 router.use("/category", categoryRoutes);
 router.use("/carOwnerRequest", carOwnerRouter);
+router.use("/owner", ownerRouter);
 
 module.exports = router;
