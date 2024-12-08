@@ -22,6 +22,7 @@ const addUser = async (req, res) => {
 
 const login = async (req, res) => {
   try {
+ 
     const { email, password } = req.body;
 
     // Kiểm tra xem email có tồn tại không

@@ -25,14 +25,20 @@ const register = async (userData) => {
     // Lưu người dùng mới vào cơ sở dữ liệu
   });
   return await newUser.save();
-}; 
+};
  
-    const getUserByEmail = async (email) => {
-      return await User.findOne({ email });
-    };
-    const getRoleByRoleId = async (role_id) => {
-      return await Role.findById({ _id: role_id });
-    }; 
+
+
+
+const getUserByEmail = async (email) => {
+    return await User.findOne({ email }); 
+}
+
+const getRoleByRoleId = async (role_id) => {
+  return await Role.findById({ _id:role_id }); 
+}
+ 
+
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua
   const skip = (page - 1) * limit;
