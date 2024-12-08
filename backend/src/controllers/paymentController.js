@@ -5,8 +5,8 @@ const moment = require("moment");
 // Tạo thanh toán mới
  
 const createPayment = async (req, res) => {
-  try {
-    
+  try { 
+
     const data = req.body;
     const { bookingId, totalAmount } = req.body; 
     // valid booking exist
@@ -27,8 +27,7 @@ const createPayment = async (req, res) => {
             payment_date: new Date(),
             payment_status: "Completed",
             payment_method: "ZaloPay",
-            payment_amount : totalAmount,
-            transaction_id: transaction
+            payment_amount : totalAmount, 
           }
         const newPayment = await paymentService.createPayment(dataPayment);
   
@@ -107,3 +106,4 @@ module.exports = {
   updatePayment,
   deletePayment
 };
+

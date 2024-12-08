@@ -5,19 +5,36 @@ const createBooking = async (req, res) => {
   try {
     const userId = req.user.userId;
     const data = req.body;
-    const carId = req.params.id;
-    const checkCarId = await bookingService.checkCarId(carId);
+    console.log(data.car_id);
+    const checkCarId = await bookingService.checkCarId(data.car_id);
+    console.log(`${checkCarId}`);
     if (!checkCarId) {
       return res.status(404).json({ message: "Car not found" });
     }
-    const checkBooking = await bookingService.checkBooking(userId, carId);
-    if (checkBooking) {
-      return res
-        .status(400)
-        .json({ message: "You have already booked this car" });
-    }
-    const bookingCar = { ...data, user_id: userId, car_id: carId };
+
+        // Tính số ngày thuê xe
+        const startDate = new Date(data.start_date);
+        const endDate = new Date(data.end_date);
+        const rentalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Chênh lệch ngày
+    
+        if (rentalDays <= 0) {
+          return res.status(400).json({ message: "End date must be after start date" });
+        }
+    
+
+    // get price car rental
+    const price = await bookingService.getPriceCar(data.car_id);
+    console.log(price);
+    // Tính tổng tiền thuê xe
+    const totalPrice = rentalDays * price.price_per_day;
+    const bookingCar = {
+      ...data,
+      user_id: userId,
+      car_id: data.car_id,
+      total_price: totalPrice
+    };
     const booking = await bookingService.createBooking(bookingCar);
+
     if (!booking) {
       return res.status(400).json({ message: "Booking failed" });
     }

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const carOwnerRequest = require("../services/carOwnerRequest");
 const Middleware = {
   verifyToken: (req, res, next) => {
     const tokenBear = req.header("Authorization")?.replace("Bearer ", "");
@@ -28,13 +28,40 @@ const Middleware = {
       if (roles.includes(userRole)) {
         next();
       } else {
-        return res
-          .status(403)
-          .json({
-            message: "You do not have permission to perform this action"
-          });
+        return res.status(403).json({
+          message: "You do not have permission to perform this action"
+        });
       }
     };
+  },
+
+  verifyOwnerCar: async (req, res, next) => {
+    const userId = req.user.userId;
+    console.log(userId);
+    // check if the user is the owner of the car
+    const checkOwner = await carOwnerRequest.checkOwner(userId);
+
+    if (!checkOwner) {
+      return res
+        .status(403)
+        .json({ message: "You are not the owner of this car" });
+    }
+    if (checkOwner.status !== "Approved") {
+      return res
+        .status(403)
+        .json({
+          message:
+            "Bạn đã gửi yêu trở thành chủ xe nhưng chưa được chấp nhận . Vui lòng chờ xác nhận từ hệ thống"
+        });
+    }
+    next();
+  },
+  verifyOnlyUserBooking : async (req, res, next) => {
+    const role = req.user.role_id;
+    if(role !== 'user') {
+        return res.status(403).json({ message: "Chỉ có user mới có thể đặt xe" });
+    }
+    next()
   }
 };
 
