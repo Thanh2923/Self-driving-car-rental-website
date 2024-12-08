@@ -27,16 +27,39 @@ const register = async (userData) => {
   return await newUser.save();
 };
 
-
-
-
-const getUserByEmail = async (email) => {
-    return await User.findOne({ email }); 
-}
-
-const getRoleByRoleId = async (role_id) => {
-  return await Role.findById({ _id:role_id }); 
-}
+ 
+// Đăng nhập
+const login = async (email, password) => {
+  try {
+   
+    const user = await User.findOne({ email });
+    console.log(user.password);
+    if (!user) {
+      return res.status(404).json({ message: "Email không đúng." });
+    }
+    // So sánh mật khẩu đã mã hóa
+    const isMatch = await bcrypt.compare(password, user.password); 
+    if (!isMatch) {
+      return res.status(404).json({ message: "Password không đúng." });
+    }
+    const getRoleName = await Role.findOne({ _id: user.role_id });
+    
+    console.log(getRoleName);
+    const token = generateToken(
+      user._id,
+      user.fullName,
+      user.email,
+      user.phone,
+      getRoleName.roleName
+    ); 
+    // Trả về user và token, bao gồm cả role_id
+    return { user, token };
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.message);
+  }
+};
+ 
 
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua

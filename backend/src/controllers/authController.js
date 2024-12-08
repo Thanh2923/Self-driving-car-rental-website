@@ -23,6 +23,7 @@ const addUser = async (req, res) => {
 
 const login = async (req, res) => {
   try {
+ 
     const { email, password } = req.body;
 
     // Kiểm tra xem email có tồn tại không
@@ -74,6 +75,7 @@ const login = async (req, res) => {
       },
       token,
     });
+ 
   } catch (error) {
     console.error('Lỗi trong controller login:', error);
     return res.status(500).json({
