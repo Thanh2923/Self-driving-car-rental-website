@@ -15,8 +15,7 @@ const getRoleById = async (id) => {
 
 
 const getRoleNameById = async (id) => {
-    const role = await Role.findById(id);
-    return role.roleName
+    return await Role.findById(id);
 };
 
 const updateRole = async (id, data) => {

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import AddCategoryForm from './AddCategoryForm';
 import EditCategoryForm from './EditCategoryForm';
 import CategoryTable from './CategoryTable';
@@ -11,25 +12,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ActionDelete from '../ActionDelete';
 const CategoryManagement = () => {
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || 1);
+  const limit = 4;
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { categories, loading, error } = useSelector((state: RootState) => state.category);
   const [editingCategory, setEditingCategory] = useState(null);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
- 
-  const totalPages = Math.ceil(categories.length / 10); // Tính tổng số trang dựa trên dữ liệu thực tế
-   console.log(categories)
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
+  
   // Fetch categories khi component mount
   useEffect(() => {
-    dispatch(fetchCategories({ page: currentPage, limit: 5 }));
+    dispatch(fetchCategories({ page: currentPage, limit: limit }));
   }, [dispatch,currentPage]);
 
   // Hàm thêm mới danh mục
@@ -122,17 +117,19 @@ const CategoryManagement = () => {
             categories={categories.data}
             onEdit={handleEditCategory}
             onDelete={handleShowDeleteCategory}
+            currentPage={categories.currentPage}
+            limit={limit}
           />
         )}
       </div>
 
       {/* Phân trang */}
       <div className="pt-4">
-        <Pagination
-          currentPage={categories.currentPage}
-          totalPages={categories.totalCategories}
-          onPageChange={handlePageChange}
-        />
+      <Pagination
+        currentPage={categories.currentPage}
+        totalPages={categories.totalPages}
+       
+      />
       </div>
     </div>
   );

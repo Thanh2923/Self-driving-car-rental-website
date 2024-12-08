@@ -1,7 +1,8 @@
 "use client";
-
-const UserTable = ({ users, onEdit, onDelete }) => {
+const UserTable = ({ users, onEdit, onDelete,currentPage,limit }) => {
+ 
   const safeUsers = users ?? [];
+  console.log(safeUsers)
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full table-auto">
@@ -19,12 +20,12 @@ const UserTable = ({ users, onEdit, onDelete }) => {
         <tbody>
           {safeUsers.map((user,index) => (
             <tr key={index} className="border-b">
-              <td className="px-4 py-2">{index+1}</td>
+              <td className="px-4 py-2">{(currentPage - 1) * limit + index + 1}</td>
               <td className="px-4 py-2">{user.fullName}</td>
               <td className="px-4 py-2 max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">{user.email}</td>
               <td className="px-4 py-2 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">{user.password}</td>
               <td className="px-4 py-2 ">{user.phone}</td>
-              <td className="px-4 py-2">{user.role_id}</td>
+              <td className="px-4 py-2">{user.role_id.roleName}</td>
               <td className="px-4 py-2 flex space-x-2">
                 <button
                   onClick={() => onEdit(user)}

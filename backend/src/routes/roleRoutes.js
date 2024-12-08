@@ -8,5 +8,4 @@ router.get('/', roleController.getAllRoles); // Lấy tất cả vai trò
 router.get('/:id', roleController.getRoleById); // Lấy vai trò theo ID
 router.put('/:id', roleController.updateRole); // Cập nhật vai trò
 router.delete('/:id', roleController.deleteRole); // Xóa vai trò
-
 module.exports = router;

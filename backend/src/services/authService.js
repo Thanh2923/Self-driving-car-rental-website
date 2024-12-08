@@ -44,7 +44,9 @@ const getAllUser = async (page = 1, limit = 5) => {
   // Lấy danh sách users với phân trang và populate roleName từ Role
   const users = await User.find()
     .skip(skip) // Bỏ qua các mục trước trang hiện tại
-    .limit(limit); // Giới hạn số lượng mục trả về mỗi trang
+    .limit(limit)
+    .populate('role_id', 'roleName');
+     // Giới hạn số lượng mục trả về mỗi trang
 
   // Lấy tổng số lượng các user để tính tổng số trang
   const totalUsers = await User.countDocuments();
@@ -90,7 +92,7 @@ const deleteUser = async (id) => {
 
 // Hàm thêm người dùng (admin)
 const addUser = async (userData) => {
-  const { fullName, password, phone, email, role_id = "user" } = userData;
+  const { fullName, password, phone, email,role_id } = userData;
 
   // Kiểm tra xem số điện thoại đã tồn tại chưa
   const existingPhone = await User.findOne({ phone });
@@ -109,7 +111,7 @@ const addUser = async (userData) => {
     password: hashedPassword, // Lưu mật khẩu đã mã hóa
     phone,
     email,
-    role_id // Vai trò người dùng (user, admin)
+    role_id
   });
 
   // Lưu người dùng mới vào cơ sở dữ liệu
