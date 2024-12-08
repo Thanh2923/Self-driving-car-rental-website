@@ -11,7 +11,6 @@ const register = async (req, res) => {
   }
 };
 
- 
 const addUser = async (req, res) => {
   try {
     console.log(req.body)
@@ -32,7 +31,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại.',
+        message: "Tài khoản không tồn tại. Vui lòng kiểm tra lại."
       });
     }
 
@@ -41,16 +40,16 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(404).json({
         success: false,
-        message: 'Mật khẩu không đúng. Vui lòng kiểm tra lại.',
+        message: "Mật khẩu không đúng. Vui lòng kiểm tra lại."
       });
     }
 
     // Lấy thông tin vai trò người dùng
-    const role = await authService.getRoleByRoleId(user.role_id)
+    const role = await authService.getRoleByRoleId(user.role_id);
     if (!role) {
       return res.status(404).json({
         success: false,
-        message: 'Không tìm thấy vai trò người dùng.',
+        message: "Không tìm thấy vai trò người dùng."
       });
     }
 
@@ -63,29 +62,28 @@ const login = async (req, res) => {
       role.roleName
     );
 
+    
     // Trả về kết quả thành công
     return res.status(200).json({
       success: true,
-      message: 'Đăng nhập thành công.',
+      message: "Đăng nhập thành công.",
       user: {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
-        roleName: role.roleName,
+        roleName: role.roleName
       },
-      token,
+      token
     });
- 
   } catch (error) {
-    console.error('Lỗi trong controller login:', error);
+    console.error("Lỗi trong controller login:", error);
     return res.status(500).json({
       success: false,
-      message: 'Lỗi hệ thống. Vui lòng thử lại sau.',
+      message: "Lỗi hệ thống. Vui lòng thử lại sau."
     });
   }
 };
-
 
 const getAllUser = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;

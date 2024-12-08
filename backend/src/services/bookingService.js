@@ -5,20 +5,20 @@ const createBooking = async (data) => {
   return await booking.save();
 };
 
-const getAllBookings = async () => {
-  return await Booking.find()
+const getAllBookings = async (userBooking) => {
+  return await Booking.find({ user_id: userBooking })
     .populate("user_id", "name email") // Tham chiếu thông tin User
     .populate("car_id", "car_name category_id"); // Tham chiếu thông tin Car
 };
 
-const getBookingById = async (id) => {
-  return await Booking.findById(id)
+const getBookingById = async (id, userId) => {
+  return await Booking.findOne({ _id: id, user_id: userId })
     .populate("user_id", "name email")
     .populate("car_id", "car_name category_id");
 };
 
-const updateBooking = async (id, data) => {
-  return await Booking.findByIdAndUpdate(id, data, { new: true });
+const updateBooking = async (id, updateData) => {
+  return await Booking.findByIdAndUpdate(id, updateData, { new: true });
 };
 
 const deleteBooking = async (id) => {
@@ -30,22 +30,14 @@ const checkCarId = async (carId) => {
   return await Car.findById({ _id: carId });
 };
 
-// checkBooking(userId, carId)
-// const checkBooking = async (userId, carId) => {
-//   try {
-//     console.log(userId, carId);
-//     const booking = await Booking.findOne({ user_id: userId, car_id: carId });
-//     console.log(booking);
-//     return booking;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-
-//getPriceCar(carId)
 const getPriceCar = async (carId) => {
-  const price_per_day = await Car.findOne({_id: carId });
+  const price_per_day = await Car.findOne({ _id: carId });
   return price_per_day;
+};
+// check booking from Owner
+const findBooking = async (car_id) => {
+  const find = await Booking.find({ car_id: car_id });
+  return find;
 };
 
 module.exports = {
@@ -54,7 +46,7 @@ module.exports = {
   getBookingById,
   updateBooking,
   deleteBooking,
-  
   checkCarId,
-  getPriceCar
+  getPriceCar,
+  findBooking
 };

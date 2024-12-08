@@ -26,6 +26,7 @@ const register = async (userData) => {
   });
   return await newUser.save();
 };
+ 
 
 const getUserByEmail = async (email) => {
   return await User.findOne({ email })
@@ -34,9 +35,7 @@ const getUserByEmail = async (email) => {
 const getRoleByRoleId =  async (role_id) => {
   return await Role.findById({ _id :role_id })
 }
-
  
-
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua
   const skip = (page - 1) * limit;
@@ -114,8 +113,18 @@ const addUser = async (userData) => {
     role_id
   });
 
+  
   // Lưu người dùng mới vào cơ sở dữ liệu
   return await newUser.save();
+};
+
+
+const getRoleByName = async (roleName) => {
+  const roleId = await Role.findOne({ roleName: roleName });
+  return roleId
+} 
+const updateUserRole = async (userId, roleId) => {
+  return await User.findByIdAndUpdate(userId, { role_id: roleId }, { new: true });
 };
 
 module.exports = {
@@ -126,5 +135,5 @@ module.exports = {
   deleteUser,
   addUser,
   getRoleByRoleId,
-  getUserByEmail,
+  getUserByEmail,getRoleByName,updateUserRole
 };

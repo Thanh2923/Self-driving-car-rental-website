@@ -1,5 +1,5 @@
 const Payment = require('../models/payment'); // Đường dẫn tới file model Payment
-
+const Booking = require('../models/booking')
 const createPayment = async (data) => {
     const payment = new Payment(data);
     return await payment.save();
@@ -21,7 +21,7 @@ const deletePayment = async (id) => {
     return await Payment.findByIdAndDelete(id);
 };
 const booking = async (bookingId) => {
-    return await Payment.findById(bookingId)
+    return await Booking.findOne({_id : bookingId})
 };
 const createTransaction = async (bookingId, totalAmount) =>{
     try {

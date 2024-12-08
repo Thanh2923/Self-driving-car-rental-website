@@ -21,12 +21,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    role_id: {
+    role_id : {
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Role',  // Liên kết với bảng Role
       required: true,
     },
-   
   },
   {
     timestamps: true, // Thêm trường createdAt và updatedAt tự động

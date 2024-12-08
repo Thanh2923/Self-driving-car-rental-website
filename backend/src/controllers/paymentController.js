@@ -6,16 +6,18 @@ const moment = require("moment");
  
 const createPayment = async (req, res) => {
   try { 
-
+    
     const data = req.body;
-    const { bookingId, totalAmount } = req.body; 
-    // valid booking exist
+    const { bookingId } = req.body; 
+    // Here ! check valid booking id exist
     const booking = await paymentService.booking(bookingId);
 
     if (!booking) {
       return res.status(400).json({ message: "Booking not found !" });
     }
-    const transaction = await paymentService.createTransaction(bookingId , totalAmount);
+    //
+    const transaction = await paymentService.createTransaction(bookingId._id  , booking.total_price);
+
     if (!transaction) {
         return res.status(400).json({ message: "Failed to create transaction!" });
       }
