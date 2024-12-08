@@ -50,6 +50,7 @@ const SignUp = ({
       email,
       password,
     })
+
     setTimeout(()=>{
       handleShowSignUp();
     },1000)
