@@ -48,12 +48,19 @@ const getEmail = async (userId) => {
     throw Error(err.message);
   }
 };
-
+const checkOwner = async (userId) => {
+try {
+return await CarOwnerRequest.findOne({user_id : userId})
+}catch(err){
+    console.log(err);
+    throw Error(err.message);
+}
+}
 
 module.exports = {
   carOwnerRequests,
   getAllCarOwnerRequest,
   getCarOwnerRequestById,
   updateCarOwnerRequest,
-  getEmail
+  getEmail,checkOwner
 };

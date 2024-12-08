@@ -10,7 +10,7 @@ const register = async (req, res) => {
   }
 };
 
-// Đăng ký
+ 
 const addUser = async (req, res) => {
   try {
     const users = await authService.addUser(req.body);
@@ -23,10 +23,12 @@ const addUser = async (req, res) => {
 // Đăng nhập
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email , password } = req.body;
+    console.log(email , password)
+
     const { user, token } = await authService.login(email, password);
     
-    res.status(200).json({ message: "Đăng nhập thành công", user, token });
+   return  res.status(200).json({ message: "Đăng nhập thành công", user, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
