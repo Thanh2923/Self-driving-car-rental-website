@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
             fullName: data.user.fullName,
             email: data.user.email,
             phone: data.user.phone,
-            role_id: data.user.role_id,
+            role_id: data.user.roleName,
             token: data.token,
           };
         }
@@ -48,8 +48,10 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = user.token; // Lưu accessToken vào token JWT
       }
       return token;
+
     },
     async session({ session, token }) {
+    
       // Lưu thông tin từ token vào session để trả về client
       session.user.id = token.id;
       session.user.fullName = token.fullName;
