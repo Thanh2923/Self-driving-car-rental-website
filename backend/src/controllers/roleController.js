@@ -36,9 +36,9 @@ const getRoleById = async (req, res) => {
 const getRoleNameById = async (req, res) => {
     try {
         const id = req.params.id;
-        const roleName = await roleService.getRoleById(id);
-        if (!roleName) return res.status(404).json({ message: 'Role not found' });
-        return res.status(200).json(roleName);
+        const role = await roleService.getRoleNameById(id);
+        if (!role) return res.status(404).json({ message: 'Role not found' });
+        return res.status(200).json(role);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }

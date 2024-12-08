@@ -1,6 +1,6 @@
 "use client";
 
-const CategoryTable = ({ categories, onEdit, onDelete }) => {
+const CategoryTable = ({ categories, onEdit, onDelete,currentPage, limit }) => {
   const safeCategories = categories ?? [];
   return (
     <div className="overflow-x-auto">
@@ -15,7 +15,7 @@ const CategoryTable = ({ categories, onEdit, onDelete }) => {
         <tbody>
           {  safeCategories.map((category,index) => (
             <tr key={index} className="border-b">
-              <td className="px-4 py-2">{index+1}</td>
+              <td className="px-4 py-2">{(currentPage - 1) * limit + index + 1}</td>
               <td className="px-4 py-2">{category.category_name}</td>
               <td className="px-4 py-2">
                 <button

@@ -1,6 +1,6 @@
 "use client";
 
-const EventTable = ({ events, onEdit, onDelete }) => {
+const EventTable = ({ events, onEdit, onDelete,currentPage,limit }) => {
   const safeEvent = events ?? [];
   const ulrImgae = process.env.NEXT_PUBLIC_API_IMAGE;
 
@@ -18,11 +18,11 @@ const EventTable = ({ events, onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {safeEvent.map((event) => {
+          {safeEvent.map((event,index) => {
             const date = new Date(event.event_date).toISOString().split('T')[0]; // Đảm bảo ngày được định dạng đúng
             return (
-              <tr key={event._id} className="border-b">
-                <td className="px-4 py-2">{event._id}</td>
+              <tr key={index} className="border-b">
+                <td className="px-4 py-2">{(currentPage - 1) * limit + index + 1}</td>
                 <td className="px-4 py-2">{event.event_name}</td>
                 <td className="px-4 py-2">
                   {/* Hiển thị ảnh nếu có */}

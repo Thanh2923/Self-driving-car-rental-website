@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import AddUserForm from './AddUserForm';
 import EditUserForm from './EditUserForm';
 import UserTable from './UserTable';
@@ -12,44 +13,48 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const UserManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { users, loading, error, totalPages } = useSelector((state: RootState) => state.users);
+  const limit = 4;
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || 1);
+  const { users, loading, error } = useSelector((state: RootState) => state.users);
   const [showModal, setShowModal] = useState(false);
   const [usersToDelete, setUsersToDelete] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
-  const [showForm, setShowForm] = useState(false); // Trạng thái hiển thị form
-  const [currentPage, setCurrentPage] = useState(1);
-
-  
+  const [showForm, setShowForm] = useState(false); 
   useEffect(() => {
-    dispatch(fetchUsers({ page: currentPage, limit: 5 }));
+    dispatch(fetchUsers({ page: currentPage, limit: limit }));
   }, [currentPage, dispatch]);
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
 
   const handleAddUser = (userData: any) => {
     dispatch(addUser(userData))
    if(error !==null) {
     toast.error(error)
    }else{
+    dispatch(fetchUsers({ page: currentPage, limit: 5 }));
     toast.success("Thêm mới thành công")
     setTimeout(()=>{
       setShowForm(false);
+      
   },1000)
    }
   
   };
   const handleUpdateUserByid = (updateuser)=>{
+    
     const { id, ...formData } = updateuser;
     dispatch(updateUser({id,formData}));
-    toast.success("Cập nhật thành công")
-    setTimeout(()=>{
-      setShowForm(false);
-  },1000)
+    if(error !==null) {
+      toast.error(error)
+     }else{
+      dispatch(fetchUsers({ page: currentPage, limit: 5 }));
+      toast.success("Cập nhật thành công")
+      setTimeout(()=>{
+        setShowForm(false);
+        
+    },1000)
   }
+}
 
   const handleEditUser = (user: any) => {
     setEditingUser(user);
@@ -115,16 +120,15 @@ const UserManagement = () => {
       <div className="mb-6">
       
   
-          <UserTable users={users.data} onEdit={handleEditUser} onDelete={handleShowDeleteUser} />
+          <UserTable users={users.data} onEdit={handleEditUser} onDelete={handleShowDeleteUser} currentPage={users.currentPage} limit={limit} />
         
       </div>
 
-      {/* Phân trang */}
       <div className="pt-4">
         <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+          currentPage={users.currentPage}
+          totalPages={users.totalPages}
+          
         />
       </div>
     </div>

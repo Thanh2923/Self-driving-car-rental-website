@@ -75,7 +75,7 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
         />
       </div>
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Mật khẩu</label>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
         <input
           type="text"
           id="phone"
@@ -104,7 +104,7 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
                 <option>Đang tải...</option>
               ) : (
                 roles.map((role,index) => (
-                  <option key={index} value={role.roleName}>
+                  <option key={index} value={role._id}>
                     {role.roleName}
                   </option>
                 ))

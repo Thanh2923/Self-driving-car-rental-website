@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid'; 
+import { useSearchParams } from 'next/navigation';
 import AddEventForm from './AddEventForm';
 import EditEventForm from './EditEventForm';
 import EventTable from './EventTable';
@@ -12,27 +12,18 @@ import ActionDelete from '../ActionDelete';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const EventManagement = () => {
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || 1);
+  const limit = 4;
   const dispatch = useDispatch<AppDispatch>();
   const [showModal, setShowModal] = useState(false);
   const { events, loading, error } = useSelector((state) => state.events);
   const [editingEvent, setEditingEvent] = useState(null);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [message, setMessage] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 10; // Số lượng trang
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
   useEffect(() => {
-    dispatch(fetchEvents({ page: currentPage, limit: 5 }))
+    dispatch(fetchEvents({ page: currentPage, limit: limit }))
   }, [dispatch,currentPage]);
-
-  // Add a new event
-
 
   // Update an existing event
   const handleUpdateEvent = (updatedevent) => {
@@ -98,18 +89,16 @@ const EventManagement = () => {
         </div>
       )}
 
-      {/* Show message */}
-      {message && <div className="mb-4 text-green-500">{message}</div>}
 
       {/* Event table */}
       <div className="mb-6">
-        <EventTable events={events.data} onEdit={handleEditEvent} onDelete={handleShowDeleteEnvent} />
+        <EventTable events={events.data} onEdit={handleEditEvent} onDelete={handleShowDeleteEnvent} currentPage={events.currentPage}  limit={limit} />
       </div>
       <div className='pt-4'>
       <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
+        currentPage={events.currentPage}
+        totalPages={events.totalPages}
+       
       />
       </div>
     </div>
