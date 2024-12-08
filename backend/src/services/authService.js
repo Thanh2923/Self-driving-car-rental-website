@@ -1,7 +1,5 @@
 const User = require("../models/user");
 const Role = require("../models/role");
-const bcrypt = require("bcrypt");
-const { generateToken } = require("../helpers/jwtHelper");
 
 // Đăng ký
 const register = async (userData) => {
@@ -29,6 +27,7 @@ const register = async (userData) => {
   return await newUser.save();
 };
 
+ 
 // Đăng nhập
 const login = async (email, password) => {
   try {
@@ -60,6 +59,7 @@ const login = async (email, password) => {
     throw new Error(err.message);
   }
 };
+ 
 
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua
@@ -142,10 +142,11 @@ const addUser = async (userData) => {
 
 module.exports = {
   register,
-  login,
   getAllUser,
   getUserById,
   updateUser,
   deleteUser,
-  addUser
+  addUser,
+  getRoleByRoleId,
+  getUserByEmail,
 };
