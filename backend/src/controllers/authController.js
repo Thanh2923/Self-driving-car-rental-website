@@ -1,10 +1,13 @@
-const authService = require('../services/authService');
-
+const authService = require("../services/authService");
+const Role = require('../models/role')
+const User = require('../models/user')
+const bcrypt = require('bcrypt');
+const { generateToken } = require('../helpers/jwtHelper');
 // Đăng ký
 const register = async (req, res) => {
   try {
     const users = await authService.register(req.body);
-    res.status(201).json({ message: 'Đăng ký thành công', users });
+    res.status(201).json({ message: "Đăng ký thành công", users });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -14,31 +17,86 @@ const register = async (req, res) => {
 const addUser = async (req, res) => {
   try {
     const users = await authService.addUser(req.body);
-    res.status(201).json({ message: 'Đăng ký thành công', users });
+    res.status(201).json({ message: "Đăng ký thành công", users });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// Đăng nhập
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { user, token } = await authService.login(email, password);
-    res.status(200).json({ message: 'Đăng nhập thành công', user, token });
+
+    // Kiểm tra xem email có tồn tại không
+    const user = await authService.getUserByEmail(email);
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại.',
+      });
+    }
+
+    // Kiểm tra mật khẩu có đúng không
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch)
+    if (!isMatch) {
+      return res.status(404).json({
+        success: false,
+        message: 'Mật khẩu không đúng. Vui lòng kiểm tra lại.',
+      });
+    }
+
+    // Lấy thông tin vai trò người dùng
+    const role = await authService.getRoleByRoleId(user.role_id);
+    if (!role) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy vai trò người dùng.',
+      });
+    }
+
+    // Tạo token (JWT)
+    const token = generateToken(
+      user._id,
+      user.fullName,
+      user.email,
+      user.phone,
+      role.roleName
+    );
+
+    // Trả về kết quả thành công
+    return res.status(200).json({
+      success: true,
+      message: 'Đăng nhập thành công.',
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        roleName: role.roleName,
+      },
+      token,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Lỗi trong controller login:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi hệ thống. Vui lòng thử lại sau.',
+    });
   }
 };
 
+
+
 const getAllUser = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
-    try {
-        const users = await authService.getAllUser(Number(page), Number(limit));
-        return res.status(200).json(users);
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
+  try {
+    const users = await authService.getAllUser(Number(page), Number(limit));
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 const getUserById = async (req, res) => {
@@ -51,11 +109,10 @@ const getUserById = async (req, res) => {
   }
 };
 
-
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-   
+
     const updatedUser = await authService.updateUser(id, req.body.formData);
     res.status(200).json({ success: true, data: updatedUser });
   } catch (error) {
@@ -67,12 +124,13 @@ const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     await authService.deleteUser(id);
-    res.status(200).json({ success: true, message: 'User deleted successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     res.status(404).json({ success: false, message: error.message });
-  } 
+  }
 };
-
 
 module.exports = {
   register,

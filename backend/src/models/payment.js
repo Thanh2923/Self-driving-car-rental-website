@@ -19,9 +19,24 @@ const paymentSchema = new mongoose.Schema({
     },
     payment_method: { 
         type: String, 
-        enum: ['Credit Card', 'PayPal', 'Bank Transfer', 'Cash'], // Các phương thức thanh toán hợp lệ
+        enum: ['Credit Card','ZaloPay' , 'PayPal', 'Bank Transfer', 'Cash'], // Các phương thức thanh toán hợp lệ
         required: true 
-    }
+    },
+    transaction_id: {
+        type: String,
+        unique: true,
+        sparse: true,
+    },
+    currency: {
+        type: String,
+        default: 'VND',
+        required: true,
+    },
+    payment_amount: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
 }, { timestamps: true }); // Tự động thêm createdAt và updatedAt
 
 // Tạo model từ schema
