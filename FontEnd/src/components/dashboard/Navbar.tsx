@@ -27,25 +27,31 @@ const Navbar = () => {
     <li >
       <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/user-management" className={` ${activeItem==="user-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
           <span className="w-2 h-2 rounded-full bg-blue-500 group-hover:bg-blue-500"></span>
-          Tài Khoản
+         Quản Lý Tài Khoản
+        </Link>
+      </li>
+      <li >
+      <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/owner-management" className={` ${activeItem==="event-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
+          <span className="w-2 h-2 rounded-full bg-red-500 group-hover:bg-blue-500"></span>
+          Quản Lý Tài Xế
         </Link>
       </li>
       <li >
       <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/product-management" className={` ${activeItem==="product-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
           <span className="w-2 h-2 rounded-full bg-orange-500 group-hover:bg-blue-500"></span>
-         Sản Phẩm
+          Quản Lý Xe
                  </Link>
       </li>
       <li >
       <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/category-management" className={` ${activeItem==="category-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
           <span className="w-2 h-2 rounded-full bg-yellow-500 group-hover:bg-blue-500"></span>
-           Danh Mục
+          Quản lý Danh Mục Xe
         </Link>
       </li>
       <li >
-      <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/order-management" className={` ${activeItem==="order-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
+      <Link onClick={()=>handleItemClick(activeItem)} href="/dashboard/cars-rental-management" className={` ${activeItem==="order-management" ? "text-blue-600 bg-blue-100" :""} flex items-center gap-2 px-4 py-4 text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition-colors rounded-lg group`} >
           <span className="w-2 h-2 rounded-full bg-green-500 group-hover:bg-blue-500"></span>
-          Đơn Hàng
+          Quản Lý Thuê Xe
         </Link>
       </li>
       <li >
