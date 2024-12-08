@@ -19,14 +19,9 @@ const paymentSchema = new mongoose.Schema({
     },
     payment_method: { 
         type: String, 
-        enum: ['Credit Card','ZaloPay' , 'PayPal', 'Bank Transfer', 'Cash'], // Các phương thức thanh toán hợp lệ
+        enum: ['Credit Card','ZaloPay','PayPal', 'Bank Transfer', 'Cash'], // Các phương thức thanh toán hợp lệ
         required: true 
-    },
-    transaction_id: {
-        type: String,
-        unique: true,
-        sparse: true,
-    },
+    }, 
     currency: {
         type: String,
         default: 'VND',
