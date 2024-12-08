@@ -11,7 +11,6 @@ const createBooking = async (req, res) => {
     if (!checkCarId) {
       return res.status(404).json({ message: "Car not found" });
     }
-
         // Tính số ngày thuê xe
         const startDate = new Date(data.start_date);
         const endDate = new Date(data.end_date);
@@ -20,8 +19,6 @@ const createBooking = async (req, res) => {
         if (rentalDays <= 0) {
           return res.status(400).json({ message: "End date must be after start date" });
         }
-    
-
     // get price car rental
     const price = await bookingService.getPriceCar(data.car_id);
     console.log(price);

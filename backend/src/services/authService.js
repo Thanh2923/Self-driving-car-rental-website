@@ -32,31 +32,27 @@ const register = async (userData) => {
 // Đăng nhập
 const login = async (email, password) => {
   try {
-    console.log(email);
-    console.log(password);
-     
-    const user = await User.findOne({ email });  
-    console.log(user.password); 
+   
+    const user = await User.findOne({ email });
+    console.log(user.password);
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "Email không đúng." });
-    } 
+      return res.status(404).json({ message: "Email không đúng." });
+    }
     // So sánh mật khẩu đã mã hóa
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log(isMatch); 
-    if (!isMatch) throw new Error("Mật khẩu không đúng."); 
+    const isMatch = await bcrypt.compare(password, user.password); 
+    if (!isMatch) {
+      return res.status(404).json({ message: "Password không đúng." });
+    }
     const getRoleName = await Role.findOne({ _id: user.role_id });
-
-    console.log(getRoleName); 
+    
+    console.log(getRoleName);
     const token = generateToken(
       user._id,
       user.fullName,
       user.email,
       user.phone,
       getRoleName.roleName
-    );
-
+    ); 
     // Trả về user và token, bao gồm cả role_id
     return { user, token };
   } catch (err) {

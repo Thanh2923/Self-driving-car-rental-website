@@ -24,8 +24,7 @@ const addUser = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email , password } = req.body;
-    console.log(email , password)
-
+    console.log(email , password) 
     const { user, token } = await authService.login(email, password);
     
    return  res.status(200).json({ message: "Đăng nhập thành công", user, token });
