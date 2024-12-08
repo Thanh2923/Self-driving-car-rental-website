@@ -1,6 +1,5 @@
 const authService = require("../services/authService");
-const bcrypt = require("bcrypt");
-const { generateToken } = require("../helpers/jwtHelper");
+
 // Đăng ký
 const register = async (req, res) => {
   try {
@@ -11,7 +10,7 @@ const register = async (req, res) => {
   }
 };
 
- 
+// Đăng ký
 const addUser = async (req, res) => {
   try {
     const users = await authService.addUser(req.body);
@@ -21,8 +20,10 @@ const addUser = async (req, res) => {
   }
 };
 
+// Đăng nhập
 const login = async (req, res) => {
   try {
+ 
     const { email, password } = req.body;
 
     // Kiểm tra xem email có tồn tại không
@@ -74,6 +75,7 @@ const login = async (req, res) => {
       },
       token,
     });
+ 
   } catch (error) {
     console.error('Lỗi trong controller login:', error);
     return res.status(500).json({
