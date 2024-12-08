@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Role = require("../models/role");
-
+const bcrypt = require('bcrypt');
 // Đăng ký
 const register = async (userData) => {
   const { fullName, password, phone, email } = userData;
@@ -27,16 +27,15 @@ const register = async (userData) => {
   return await newUser.save();
 };
 
-
-
-
 const getUserByEmail = async (email) => {
-    return await User.findOne({ email }); 
+  return await User.findOne({ email })
 }
 
-const getRoleByRoleId = async (role_id) => {
-  return await Role.findById({ _id:role_id }); 
+const getRoleByRoleId =  async (role_id) => {
+  return await Role.findById({ _id :role_id })
 }
+
+ 
 
 const getAllUser = async (page = 1, limit = 5) => {
   // Tính toán số lượng mục cần bỏ qua
