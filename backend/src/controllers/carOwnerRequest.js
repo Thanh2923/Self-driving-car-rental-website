@@ -1,8 +1,8 @@
-const carOwnerRequests = require("../services/carOwnerRequest");
+const carOwnerRequests = require ("../services/carOwnerRequest");
 // const wbm = require("wbm");
 const Nodemailer = require("nodemailer");
 const { MailtrapClient } = require("mailtrap");
-const authService = require('../services/authService')
+const authService = require("../services/authService");
 // when user want to request a car owner
 const CartOwnerRequest = async (req, res) => {
   try {
@@ -64,20 +64,21 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
     }
 
     const getEmail = await carOwnerRequests.getEmail(getUserOwner.user_id);
-    
+
     console.log(getEmail);
-     
 
-    // update role 
-     if(status==='Approved'){
-       const ownerCarRole = await authService.getRoleByName('ownerCar')
-       if(!ownerCarRole){
+    // update role
+    if (status === "Approved") {
+      const ownerCarRole = await authService.getRoleByName("ownerCar");
+      if (!ownerCarRole) {
         return res.status(400).json({ message: "Role not found" });
-       }
+      }
 
-       const updateRole = await authService.updateUserRole(getUserOwner.user_id, ownerCarRole._id);
-
-     }
+      const updateRole = await authService.updateUserRole(
+        getUserOwner.user_id,
+        ownerCarRole._id
+      );
+    }
     //
     const TOKEN = "12ca1b117ae28fb61627c0973da2586f";
 
@@ -91,7 +92,7 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
     };
     const recipients = [
       {
-        email:'rencooking09202@gmail.com'
+        email: "rencooking09202@gmail.com"
       }
     ];
 

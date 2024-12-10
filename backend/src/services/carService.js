@@ -11,7 +11,7 @@ const getAllCars = async (ownerId) => {
 };
 
 const getCarById = async (id) => {
-  return await Car.findById(id)
+  return await Car.findById(id);
 };
 
 const updateCar = async (id, data) => {
@@ -25,9 +25,12 @@ const deleteCar = async (id) => {
 const getOwnerId = async (userId) => {
   return await CarOwnerRequest.findOne({ user_id: userId });
 };
-
 const getIdCategory = async (chooseCategory) => {
   return await Category.findOne({ category_name: chooseCategory });
+};
+
+const getAll = async () => {
+  return await Car.find();
 };
 
 module.exports = {
@@ -37,5 +40,6 @@ module.exports = {
   updateCar,
   deleteCar,
   getOwnerId,
-  getIdCategory
+  getIdCategory,
+  getAll
 };

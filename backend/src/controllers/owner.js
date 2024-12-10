@@ -1,23 +1,58 @@
+const carService = require("../services/carService");
+// const mongoose = require("mongoose");
 const bookingService = require("../services/bookingService");
-const Owner = {
-  updateBooking: async (req, res) => {},
-  getListBooking: async (req, res) => {
-    try {
-      const userId = req.user.userId;
-       // get id owner
-      const car_id  = req.params.id;
-      console.log(car_id)
-      // check how many user booking car_id
-      const findBooking = await bookingService.findBooking(car_id);
+const getListBooking = async (req, res) => {
+  try {
+    //get userid
+    // user see list car
+    const userId = req.user.userId;
+    console.log(userId);
+    const getOwnerId = await carService.getOwnerId(userId);
+    const ownerId = getOwnerId._id;
+    console.log(ownerId);
+    const cars = await carService.getAllCars(ownerId);
 
-      if (!findBooking || findBooking.length === 0) {
-        return res.status(404).json({ message: "No booking found" });
-      }
-
-      res.status(200).json({ message : findBooking });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
+    if (!cars || cars.length === 0) {
+      return res.status(404).json({ message: "No car found" });
     }
+
+    // Lấy danh sách `car_id`
+    const carIds = cars.map((car) => car._id);
+    // Tìm bookings
+    const bookings = await bookingService.getBookings(carIds);
+    console.log("Bookings for cars:", bookings);
+    if (!bookings || bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for your cars" });
+    }
+
+    return res.status(200).json({ bookings });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 };
-module.exports = Owner;
+const updateBooking = async (req, res) => {
+  try {
+    const bookingId = req.params.bookingId;
+    const { status } = req.body;
+    // check if booking exists
+    const checkBookingExist = await bookingService.checkBookingExist(bookingId);
+    if (!checkBookingExist) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    // update status booking
+    const updateStatus = await bookingService.updateStatusBooking(
+      bookingId,
+      status
+    );
+    if (!updateStatus) {
+      return res.status(500).json({ message: "Failed to update status" });
+    }
+    res.status(200).json({ message: updateStatus });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { getListBooking, updateBooking };

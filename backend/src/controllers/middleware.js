@@ -56,11 +56,7 @@ const Middleware = {
     }
     next();
   },
-  updateRole : async (req , res , next) => {
-     const role = req.user.role_id;
-     role = 'ownerCar'
-
-  },
+ 
   verifyOnlyUserBooking : async (req, res, next) => {
     const role = req.user.role_id;
     if(role !== 'user') {

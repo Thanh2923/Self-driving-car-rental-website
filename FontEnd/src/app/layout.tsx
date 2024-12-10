@@ -40,8 +40,7 @@ export default function RootLayout(
         <ScrollArea className="w-full h-screen   border-r-[7px] border-r-yellow-600">
           <ReduxProvider>
           <Header />
-          {children}
-       
+          {children} 
           <Footer />
           </ReduxProvider>
       

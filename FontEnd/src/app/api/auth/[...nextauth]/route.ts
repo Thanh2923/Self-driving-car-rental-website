@@ -59,7 +59,6 @@ export const authOptions: NextAuthOptions = {
       session.user.phone = token.phone;
       session.user.role_id = token.role_id;
       session.accessToken = token.accessToken; // Lưu accessToken vào session
-
       return session;
     },
   },

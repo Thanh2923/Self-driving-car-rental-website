@@ -40,6 +40,26 @@ const findBooking = async (car_id) => {
   return find;
 };
 
+// getAllCar(userId)
+const getAllCar = async (userId) => {
+  const findAllCars = await Car.find({ owner_id: userId });
+  return findAllCars;
+};
+
+const getBookings = async (carIds) => {
+    const bookings = await Booking.find({ car_id: { $in: carIds } });
+    return bookings
+};
+
+const checkBookingExist = async (bookingId) => {
+    const checkBooking = await Booking.findById(bookingId);
+    return checkBooking
+};
+
+const updateStatusBooking = async (bookingId, status) => {
+    const updateStatus = await Booking.findByIdAndUpdate(bookingId, { status: status }, { new: true });
+    return updateStatus
+}
 module.exports = {
   createBooking,
   getAllBookings,
@@ -48,5 +68,6 @@ module.exports = {
   deleteBooking,
   checkCarId,
   getPriceCar,
-  findBooking
+  findBooking,
+  getAllCar,getBookings,checkBookingExist,updateStatusBooking
 };

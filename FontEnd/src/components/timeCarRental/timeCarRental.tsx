@@ -1,10 +1,10 @@
 "use client";
 import React, { HTMLInputAutoCompleteAttribute, useState } from "react";
-import { FiDelete } from "react-icons/fi";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "../ui/label";
 import { startOfDay } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
+import { FiDelete } from "react-icons/fi";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Drawer, DrawerTrigger, DrawerContent } from "../ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -175,16 +175,7 @@ const TimeCarRental = ({
             Tiếp tục
           </button>
           <ToastContainer />
-          {/* <Drawer>
-        <DrawerTrigger asChild>
-          <Button variant="outline">Button</Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <p>Total ngày thuê {days}</p>
-          <p>Time nhận xe {renRalTime.startTime}</p>
-          <p>Time return xe {renRalTime.endTime}</p>
-        </DrawerContent>
-      </Drawer> */}
+          
         </div>
       </div>
     </>
