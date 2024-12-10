@@ -6,12 +6,12 @@ const CarTable = ({ cars, onEdit, onDelete }) => {
         <thead className="bg-gray-100">
           <tr>
             <th className="px-4 py-2 text-left">ID</th>
-            <th className="px-4 py-2 text-left">Car Name</th>
+            <th className="px-4 py-2 text-left">Tên Xe</th>
+            <th className="px-4 py-2 text-left">Id Danh Mục</th>
+            <th className="px-4 py-2 text-left">Mô Tả</th>
+            <th className="px-4 py-2 text-left">Giá Tiền / Ngày</th>
+            <th className="px-4 py-2 text-left">Trạng Thái</th>
             <th className="px-4 py-2 text-left">Image</th>
-            <th className="px-4 py-2 text-left">Description</th>
-            <th className="px-4 py-2 text-left">Price/Day</th>
-            <th className="px-4 py-2 text-left">Availability</th>
-            <th className="px-4 py-2 text-left">CategoryID</th>
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>

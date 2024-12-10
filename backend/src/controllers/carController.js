@@ -5,7 +5,7 @@ const createCar = async (req, res) => {
   try {
     const userId = req.user.userId;
     const data = req.body;
-
+    console.log(data);
     const getOwnerId = await carService.getOwnerId(userId);
     if (!getOwnerId) {
       return res.status(400).json({ message: "Owner not found !" });

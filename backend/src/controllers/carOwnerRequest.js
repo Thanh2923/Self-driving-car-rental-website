@@ -33,7 +33,7 @@ const ViewCarOwnerRequest = async (req, res) => {
   try {
     const getAll = await carOwnerRequests.getAllCarOwnerRequest();
     if (!getAll || getAll.length === 0) {
-      return res.status(400).json({ message: "No requests found" });
+      return res.status(404).json({ message: "No found" });
     }
     return res.status(200).json({ data: getAll, success: true });
   } catch (err) {
@@ -47,6 +47,7 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
   const { id } = req.params; // id  cartRequest
   const { status, message } = req.body;
   console.log(id, status, message);
+  
   try {
     const getUserOwner = await carOwnerRequests.getCarOwnerRequestById(id);
     console.log(getUserOwner);

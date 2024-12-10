@@ -5,6 +5,8 @@ import AddCarForm from './AddCarForm';
 import EditCarForm from './EditCarForm';
 import CarTable from './CarTable';
 import Pagination from '@/components/pagination/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '@/redux/category/categoryThunk';
 
 const CarManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -12,6 +14,7 @@ const CarManagement = () => {
   const [editingCar, setEditingCar] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState('');
+
 
   useEffect(() => {
     // Sample car data to test the interface

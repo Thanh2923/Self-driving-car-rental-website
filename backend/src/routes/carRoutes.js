@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const carController = require("../controllers/carController");
 const Middleware = require("../controllers/middleware");
+const upload = require('../middleware/upload')
 // Routes CRUD cho Car
-router.post("/", Middleware.verifyToken, Middleware.verifyOwnerCar, carController.createCar); // Tạo xe mới
+router.post("/", Middleware.verifyToken, Middleware.verifyOwnerCar, upload.single('image'), carController.createCar); // Tạo xe mới
 router.get(
   "/getListCar",
   Middleware.verifyToken,

@@ -1,9 +1,10 @@
+import CarOwnerRequestTable from "@/components/dashboard/CarOwnerManagement/CarOwnerManagement"
 
 const page = () => {
   return (
-    <div>
-      
-    </div>
+    <>
+    <CarOwnerRequestTable/>
+    </>
   )
 }
 

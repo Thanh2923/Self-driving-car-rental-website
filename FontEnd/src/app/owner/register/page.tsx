@@ -1,16 +1,25 @@
 "use client";
 import React, { useState } from "react";
+import { useSession } from "next-auth/react"
 import Register from "@/components/register/register";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Page = () => {
+  const { data: session, status } = useSession();
   const [isRegister, setIsRegister] = useState<boolean>(false);
   const handleRegister = () => {
-    setIsRegister(!isRegister)
+    if(session){
+      setIsRegister(!isRegister)
+    }else{
+      toast.warning("Vui lòng đăng nhập trước")
+    }
   };
   const handleHiddenRegister = () => {
     setIsRegister(!isRegister)
   }
   return (
     <>
+    <ToastContainer/>
       {isRegister ?( <Register handleHiddenRegister={handleHiddenRegister}/>) : null}
 
       <div className="relative">
@@ -27,6 +36,7 @@ const Page = () => {
             Cho thuê xe trên Mioto để gia tăng thu nhập hàng tháng và gặp gỡ
             nhiều bạn bè mới!
           </h5>
+          
           <button
             className="px-[16px] mt-4 py-[12px] rounded-xl text-white bg-blue-500  motion-preset-slide-right motion-duration-1000 motion-delay-[800ms]"
             onClick={handleRegister}
