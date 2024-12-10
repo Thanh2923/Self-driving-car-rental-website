@@ -5,6 +5,8 @@ import AddCarForm from './AddCarForm';
 import EditCarForm from './EditCarForm';
 import CarTable from './CarTable';
 import Pagination from '@/components/pagination/Pagination';
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const CarManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -12,15 +14,36 @@ const CarManagement = () => {
   const [editingCar, setEditingCar] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState('');
-
+  const { data: session, status } = useSession();
+  const [carOwner, setCarOwner] = useState([]);
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
-    // Sample car data to test the interface
-    const sampleCars = [
-      { _id: '1', car_name: 'Toyota Camry ', image: 'toyota.jpg', description: 'A comfortable sedan', price_per_day: 100, availability_status: 'Available', category_id: '1' },
-      { _id: '2', car_name: 'Honda Accord', image: 'honda.jpg', description: 'Spacious and reliable', price_per_day: 120, availability_status: 'Unavailable', category_id: '2' },
-    ];
-    setCars(sampleCars);
-  }, []);
+    const fetchRequests = async () => {
+      if (session?.token) {
+        try {
+          console.log("Session Token:", session?.token); // Log token để debug
+
+          const res = await axios.get(`${baseURL}/car/getListCar`, {
+            headers: {
+              Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
+            },
+          });
+
+          setCarOwner(res.data); // Cập nhật dữ liệu vào state
+        } catch (error) {
+          if (error.response) {
+            console.error("Failed to fetch requests:", error.response.data);
+          } else {
+            console.error("Unexpected error:", error.message);
+          }
+        }
+      } else {
+        console.warn("User is not authenticated or token is missing");
+      }
+    };
+
+    fetchRequests();
+  }, [session, status]);
 
   // Add a new car
   const handleAddCar = (carData) => {
@@ -101,7 +124,7 @@ const CarManagement = () => {
 
       {/* Car table */}
       <div className="mb-6">
-        <CarTable cars={cars} onEdit={handleEditCar} onDelete={handleDeleteCar} />
+        <CarTable cars={carOwner} onEdit={handleEditCar} onDelete={handleDeleteCar} />
       </div>
       <div className='pt-4'>
       <Pagination

@@ -7,6 +7,7 @@ const carSchema = new mongoose.Schema({
         required: true, 
         trim: true 
     },
+
     category_id: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Category', // Tham chiếu đến model Category

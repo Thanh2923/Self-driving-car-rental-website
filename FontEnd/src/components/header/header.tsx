@@ -25,7 +25,10 @@ const Header = () => {
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [forgetPass, setForgetPass] = useState(false);
-  const { data: session } = useSession()
+  const { data: session } = useSession();
+
+  
+  
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
