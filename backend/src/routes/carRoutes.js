@@ -3,8 +3,14 @@ const router = express.Router();
 const carController = require("../controllers/carController");
 const Middleware = require("../controllers/middleware");
 const upload = require('../middleware/upload')
-// Routes CRUD cho Car
-router.post("/", Middleware.verifyToken, Middleware.verifyOwnerCar, upload.single('image'), carController.createCar); // Tạo xe mới
+// Routes CRUD cho Carrouter
+router.post(
+  "/",
+  Middleware.verifyToken,
+  Middleware.verifyOwnerCar,
+  upload.array('images', 5), // Cho phép tối đa 5 ảnh
+  carController.createCar
+);
 router.get(
   "/getListCar",
   Middleware.verifyToken,

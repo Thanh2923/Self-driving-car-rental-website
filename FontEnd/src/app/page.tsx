@@ -5,9 +5,8 @@ import FeatureCar from "@/components/featureCar/featureCar";
 import Toped from "@/components/toped/toped";
 import FeatureInfo from "@/components/featuresInfo/featureInfo";
 import OurService from "@/components/sevicer/ourService";
-
 export default function Home() {
-  
+ 
 
   return (
     <>

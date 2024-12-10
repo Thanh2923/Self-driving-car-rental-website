@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 // Kết nối với MongoDB
 connectDB();
-app.use("/api/uploads", express.static(path.join(__dirname, "src/uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "")));
 // Middleware xử lý JSON
 app.use(express.json());
 app.use(cors());
