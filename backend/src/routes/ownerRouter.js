@@ -1,11 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const Owner = require("../controllers/owner");
+const owner = require("../controllers/owner");
 const Middleware = require("../controllers/middleware");
+
 router.get(
-  "/listBooking/:id",
+  "/listBooking",
   Middleware.verifyToken,
   Middleware.verifyOwnerCar,
-  Owner.getListBooking
+  owner.getListBooking
+);
+router.patch(
+  "/updateBooking/:bookingId",
+  Middleware.verifyToken,
+  Middleware.verifyOwnerCar,
+  owner.updateBooking
 );
 module.exports = router;

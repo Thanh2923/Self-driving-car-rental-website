@@ -1,52 +1,71 @@
 const paymentService = require("../services/paymentService");
-const axios = require("axios").default;
-const CryptoJS = require("crypto-js");
-const moment = require("moment");
+const bookingService = require("../services/bookingService");
 // Tạo thanh toán mới
- 
+
 const createPayment = async (req, res) => {
-  try { 
-    
+  try {
     const data = req.body;
-    const { bookingId } = req.body; 
+    const { bookingId } = req.body;
     // Here ! check valid booking id exist
     const booking = await paymentService.booking(bookingId);
-
+    console.log(booking.status)
     if (!booking) {
       return res.status(400).json({ message: "Booking not found !" });
     }
-    //
-    const transaction = await paymentService.createTransaction(bookingId._id  , booking.total_price);
-
+    // check HERE ! booking status
+    if (booking.status === "completed") {
+        return res
+          .status(400)
+          .json({ message: "Booking success , can't create payment" });
+      }
+    if (booking.status !== "approved") {
+      return res
+        .status(400)
+        .json({ message: "Please wait for booking status approved !" });
+    }
+    console.log(booking.total_price);
+    const transaction = await paymentService.createTransaction(
+      booking._id,
+      booking.total_price
+    );
+    console.log(transaction);
     if (!transaction) {
-        return res.status(400).json({ message: "Failed to create transaction!" });
+      return res.status(400).json({ message: "Failed to create transaction!" });
+    }
+    // Kiểm tra trạng thái giao dịch
+    if (transaction.return_code === 1) {
+      // 1: Success
+      // Lưu thông tin thanh toán vào bảng Payment
+      const dataPayment = {
+        booking_id: bookingId,
+        payment_date: new Date(),
+        payment_status: "Completed",
+        payment_method: "ZaloPay",
+        payment_amount: booking.total_price
+      };
+      const newPayment = await paymentService.createPayment(dataPayment);
+
+      // update status booking
+      const updateBooking = await bookingService.updateStatusBooking(
+        bookingId,
+        "completed"
+      );
+      if (!updateBooking) {
+        return res
+          .status(400)
+          .json({ message: "Failed to update booking status!" });
       }
-      // Kiểm tra trạng thái giao dịch
-      if (transaction.return_code === 1) { // 1: Success
-        // Lưu thông tin thanh toán vào bảng Payment
-        const dataPayment = {
-            booking_id: bookingId,
-            payment_date: new Date(),
-            payment_status: "Completed",
-            payment_method: "ZaloPay",
-            payment_amount : totalAmount, 
-          }
-        const newPayment = await paymentService.createPayment(dataPayment);
-  
-        return res.status(201).json({
-          message: "Payment successful!",
-          transaction: transaction,
-          payment: newPayment,
-        });
-      } else {
-        return res.status(400).json({
-          message: "Payment failed!",
-          transaction: transaction,
-        });
-      }
-     
-    // const newPayment = await paymentService.createPayment(data);
-    // return res.status(201).json(newPayment);
+      return res.status(201).json({
+        message: "Payment successful!",
+        transaction: transaction,
+        payment: newPayment
+      });
+    } else {
+      return res.status(400).json({
+        message: "Payment failed!",
+        transaction: transaction
+      });
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -108,4 +127,3 @@ module.exports = {
   updatePayment,
   deletePayment
 };
-

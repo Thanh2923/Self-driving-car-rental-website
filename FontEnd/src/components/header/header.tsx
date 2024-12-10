@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react"
 
 const Header = () => {
   const pathname = usePathname();
-  const isAdminRoute = pathname.includes('/dashboard');
+  // const isAdminRoute = pathname.includes('/dashboard');
   const [isOpen, setIsOpen] = useState(true);
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
@@ -48,9 +48,9 @@ const Header = () => {
     setForgetPass(!forgetPass);
   };
    
-  if(isAdminRoute){
-    return
-  }
+  // if(isAdminRoute){
+  //   return
+  // }
 
   return (
     <>

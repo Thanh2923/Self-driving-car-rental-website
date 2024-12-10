@@ -6,9 +6,9 @@ const Middleware = require("../controllers/middleware");
 // Routes CRUD cho Booking
 
 router.post(
-  "/",
   Middleware.verifyToken,
   Middleware.verifyOnlyUserBooking,
+  "/",
   bookingController.createBooking
 ); // Tạo booking
 router.get("/", Middleware.verifyToken, bookingController.getAllBookings); // Lấy tất cả bookings

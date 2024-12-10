@@ -49,17 +49,15 @@ const createCar = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
-
-// Lấy danh sách tất cả xe
+ 
 const getAllCars = async (req, res) => {
   try {
     // user see list car
     const userId = req.user.userId;
-    console.log(userId)
-    const getOwnerId = await carService.getOwnerId(userId); 
+    console.log(userId);
+    const getOwnerId = await carService.getOwnerId(userId);
     const ownerId = getOwnerId._id;
-    console.log(ownerId)
+    console.log(ownerId);
     const cars = await carService.getAllCars(ownerId);
     console.log(cars);
     if (!cars || cars.length === 0) {
@@ -75,13 +73,13 @@ const getAllCars = async (req, res) => {
 const getCarById = async (req, res) => {
   try {
     const id = req.params.id;
-    if(id === null || id === undefined){
-        return res.status(400).json({ message: "ID is required" });
+    if (id === null || id === undefined) {
+      return res.status(400).json({ message: "ID is required" });
     }
 
     const car = await carService.getCarById(id);
     if (!car) return res.status(404).json({ message: "Car not found" });
-     res.status(200).json(car);
+    res.status(200).json(car);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -92,10 +90,10 @@ const updateCar = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-    if(id === null || id === undefined){
-        return res.status(400).json({ message: "ID is required" });
+    if (id === null || id === undefined) {
+      return res.status(400).json({ message: "ID is required" });
     }
-    
+
     const updatedCar = await carService.updateCar(id, data);
     if (!updatedCar) return res.status(404).json({ message: "Car not found" });
     return res.status(200).json(updatedCar);
@@ -116,10 +114,24 @@ const deleteCar = async (req, res) => {
   }
 };
 
+// lấy tất cả car của tất cả chử ve
+const carAll = async (req, res) => {
+  try {
+    const getAll = await carService.getAll();
+    console.log(getAll);
+    return res
+      .status(200)
+      .json({ message: "Get all car successfully", getAll });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   createCar,
   getAllCars,
   getCarById,
   updateCar,
-  deleteCar
+  deleteCar,
+  carAll
 };
