@@ -5,8 +5,10 @@ import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form"; // Import react-hook-form
 import { signIn } from "next-auth/react";
-
-
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const SignUp = ({
   handleSignUp,
   handleShowSignIn,
@@ -19,7 +21,9 @@ const SignUp = ({
   handleShowSignUp: () => void;
 }) => {
 
-
+  
+  const { data: session, status } = useSession();
+  const router = useRouter()
   
   // Sử dụng useForm hook từ react-hook-form
   const {
@@ -42,23 +46,41 @@ const SignUp = ({
     handleForgetPass();
   };
 
-  // Handle form submission
-  const onSubmit = async(data: any) => {
-    const {email,password} = data
+  const onSubmit = async (data: any) => {
+    const { email, password } = data;
     const res = await signIn("credentials", {
       redirect: false,
       email,
       password,
-    })
-
-    setTimeout(()=>{
-      handleShowSignUp();
-    },1000)
+    });
+  
+    if (res?.error) {
+      toast.error('Email hoặc mật khẩu không đúng')
+      return;
+    }
+  
+  
+    // Kiểm tra xem có phải là admin hay không
+    if (session?.user?.role_id === "admin") {
+      toast.success("Đăng nhập thành công!");
+     
+        router.push("/dashboard"); // Chuyển đến trang quản trị
+    
+    } else {
+      
+      toast.success("Đăng nhập thành công!");
+        router.push("/"); // Chuyển về trang chủ
+    
+    }
+  
+    handleShowSignUp(); // Đóng form đăng nhập sau khi hoàn tất
   };
+  
 
 
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000] bg-black/50">
+      <ToastContainer/>
       <div className="w-[95%] mt-3 mx-auto lg:mt-10 lg:w-[513px] lg:mx-auto bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
         <CiCircleRemove
           onClick={handleRemoveSignIn}

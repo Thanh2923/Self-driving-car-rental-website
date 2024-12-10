@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const carOwnerRequestSchema = new mongoose.Schema(
   {
     user_id: {
@@ -29,8 +30,19 @@ const carOwnerRequestSchema = new mongoose.Schema(
     address: {
       type: String,
       required: true
-    }
+    },
+    image:{
+      type: String, 
+      required: true, 
   },
+  
+  license: {
+    type: String,
+    required: true
+  },
+    
+  
+},
   { timestamps: true }
 );
 
