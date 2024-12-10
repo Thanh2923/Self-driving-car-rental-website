@@ -1,31 +1,27 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaFacebookF } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form"; // Import react-hook-form
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"; // Import signIn and useSession from next-auth
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const SignUp = ({
   handleSignUp,
   handleShowSignIn,
   handleForgetPass,
-  handleShowSignUp
 }: {
-  handleShowSignIn: () => void;
   handleSignUp: () => void;
+  handleShowSignIn: () => void;
   handleForgetPass: () => void;
-  handleShowSignUp: () => void;
 }) => {
-
+  const router = useRouter();
+  const { data: session, status } = useSession(); // Use session hook to get session info
   
-  const { data: session, status } = useSession();
-  const router = useRouter()
-  
-  // Sử dụng useForm hook từ react-hook-form
+  const [loading, setLoading] = useState(false); // For loading state
   const {
     register,
     handleSubmit,
@@ -47,40 +43,49 @@ const SignUp = ({
   };
 
   const onSubmit = async (data: any) => {
+    setLoading(true);
     const { email, password } = data;
+
     const res = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
-  
+
     if (res?.error) {
-      toast.error('Email hoặc mật khẩu không đúng')
+      toast.error("Đăng nhập thất bại!");
+      setLoading(false);
       return;
     }
-  
-  
-    // Kiểm tra xem có phải là admin hay không
-    if (session?.user?.role_id === "admin") {
-      toast.success("Đăng nhập thành công!");
-     
-        router.push("/dashboard"); // Chuyển đến trang quản trị
-    
-    } else {
-      
-      toast.success("Đăng nhập thành công!");
-        router.push("/"); // Chuyển về trang chủ
-    
-    }
-  
-    handleShowSignUp(); // Đóng form đăng nhập sau khi hoàn tất
-  };
-  
 
+    // Sau khi đăng nhập thành công, session sẽ được cập nhật
+    if (session) {
+      console.log(session.user?.role_id); // Kiểm tra role_id
+      if (session.user?.role_id === "user" || session.user?.role_id === "ownerCar") {
+        toast.success("Đăng nhập thành công!");
+        router.push("/dashboard"); // Điều hướng nếu là user hoặc ownerCar
+      } else {
+        toast.success("Đăng nhập thành công!");
+        router.push("/"); // Điều hướng về trang chủ
+      }
+    }
+
+    setLoading(false);
+    handleSignUp(); // Đóng form sau khi đăng nhập thành công
+  };
+
+  useEffect(() => {
+    if (session) {
+      // Kiểm tra role_id trong session sau khi session có giá trị
+      if (session.user?.role_id === "user") {
+       console.log(session.user?.role_id)
+      }
+    }
+  }, [session]);
 
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000] bg-black/50">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="w-[95%] mt-3 mx-auto lg:mt-10 lg:w-[513px] lg:mx-auto bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
         <CiCircleRemove
           onClick={handleRemoveSignIn}
@@ -150,17 +155,19 @@ const SignUp = ({
 
           {/* Submit Button */}
           <div className="submit-rental mt-3">
-            <button className="bg-blue-300 w-full hover:bg-blue-500/80 hover:text-white transition-all text-blue-600 font-bold rounded-xl p-[12px] cursor-pointer">
-              Đăng nhập
+            <button
+              type="submit"
+              className="bg-blue-300 w-full hover:bg-blue-500/80 hover:text-white transition-all text-blue-600 font-bold rounded-xl p-[12px] cursor-pointer"
+              disabled={loading} // Disable the button during loading
+            >
+              {loading ? "Đang đăng nhập..." : "Đăng nhập"}
             </button>
           </div>
 
           {/* SignUp/SignIn Toggle */}
           <div className="">
             <p className="flex items-center justify-center gap-3">
-              <span className="text-[.9rem] text-slate-400">
-                Bạn chưa là thành viên?
-              </span>
+              <span className="text-[.9rem] text-slate-400">Bạn chưa là thành viên?</span>
               <span
                 className="text-blue-400 text-[.9rem] cursor-pointer hover:text-blue-600"
                 onClick={handleSignIn}

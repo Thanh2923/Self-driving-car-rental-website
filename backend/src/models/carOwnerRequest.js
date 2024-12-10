@@ -31,11 +31,6 @@ const carOwnerRequestSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    image:{
-      type: String, 
-      required: true, 
-  },
-  
   license: {
     type: String,
     required: true

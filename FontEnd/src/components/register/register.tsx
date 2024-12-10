@@ -2,18 +2,20 @@
 import React, { useState } from "react";
 import { CiCircleRemove } from "react-icons/ci";
 import axios from 'axios';
-
+import { useSession } from "next-auth/react";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 const Register = ({
   handleHiddenRegister,
 }: {
   handleHiddenRegister: () => void;
 }) => {
   const [formData, setFormData] = useState({
-    rentalArea: "",
-    ownerName: "",
+    address: "", // Đổi từ " address" thành "address"
+    nameOwnerCar: "",
     phoneNumber: "",
-    rentalCar: "",
-    drivingLicenses: [], // Mảng chứa thông tin bằng lái xe (tên loại và ảnh)
+    car_type: "",
+    license: "", // Đổi từ " license" thành "license"
   });
 
   const districts = [
@@ -27,7 +29,9 @@ const Register = ({
     "Hoàng Sa",
   ];
 
-  const licenseTypes = ["A1", "A2", "B1", "B2", "C", "D", "E", "F"];
+  const { data: session, status } = useSession();
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const licenses = ["A1", "A2", "B1", "B2", "C", "D", "E", "F"]; // Các loại bằng cấp
 
   const handleRemoveSignIn = () => {
     handleHiddenRegister();
@@ -41,68 +45,42 @@ const Register = ({
     }));
   };
 
-  const handleLicenseFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    if (e.target.files) {
-      setFormData((prev) => {
-        const updatedLicenses = [...prev.drivingLicenses];
-        updatedLicenses[index] = {
-          ...updatedLicenses[index],
-          files: Array.from(e.target.files), // Lưu nhiều ảnh cho mỗi bằng lái
-        };
-        return { ...prev, drivingLicenses: updatedLicenses };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Tạo đối tượng dữ liệu cần gửi
+    const dataToSend = {
+      address: formData.address, // Sửa thành formData.address
+      nameOwnerCar: formData.nameOwnerCar,
+      phoneNumber: formData.phoneNumber,
+      car_type: formData.car_type,
+      license: formData.license, // Sửa thành formData.license
+    };
+
+
+    // Kiểm tra xem có token trong session không
+    if (session?.token) {
+      axios.post(`${baseURL}/carOwnerRequest/submit`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
+        },
+      })
+      .then(response => {
+        toast.success("Bạn đã đăng ký thành công , vui lòng chờ kết quả");
+        setTimeout(()=>{
+          
+          handleHiddenRegister()
+        },1000)
+      })
+      .catch(error => {
+        console.log("Error:", error);
       });
     }
   };
 
-  const handleLicenseTypeChange = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
-    const { value } = e.target;
-    setFormData((prev) => {
-      const updatedLicenses = [...prev.drivingLicenses];
-      updatedLicenses[index] = { ...updatedLicenses[index], type: value };
-      return { ...prev, drivingLicenses: updatedLicenses };
-    });
-  };
-
-  const addLicenseField = () => {
-    setFormData((prev) => ({
-      ...prev,
-      drivingLicenses: [...prev.drivingLicenses, { type: "", files: [] }],
-    }));
-  };
-
-  const removeLicenseField = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      drivingLicenses: prev.drivingLicenses.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    const formDataToSend = new FormData();
-    formDataToSend.append("rentalArea", formData.rentalArea);
-    formDataToSend.append("ownerName", formData.ownerName);
-    formDataToSend.append("phoneNumber", formData.phoneNumber);
-    formDataToSend.append("rentalCar", formData.rentalCar);
-  
-   
-    axios.post('http://localhost:8080/api/carOwnerRequest/submit', formDataToSend, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then(response => {
-      console.log("Success:", response.data);
-    })
-    .catch(error => {
-      console.log("Error:", error);
-    });
-    
-  };
-
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000] bg-black/50">
+      <ToastContainer/>
       <div className="w-[95%] mt-3 mx-auto lg:mt-10 lg:w-[555px] lg:mx-auto bg-white rounded-xl pt-[16px] px-[24px] pb-[32px] motion-preset-pop motion-duration-700">
         <CiCircleRemove
           onClick={handleRemoveSignIn}
@@ -121,15 +99,15 @@ const Register = ({
           <div className="flex flex-col gap-2">
             <label
               className="text-[#767676] font-semibold"
-              htmlFor="rentalArea"
+              htmlFor="address" // Sửa id và htmlFor thành "address"
             >
               Khu vực cho thuê ở Đà Nẵng
             </label>
             <select
               className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
-              name="rentalArea"
-              id="rentalArea"
-              value={formData.rentalArea}
+              name="address" // Sửa name thành "address"
+              id="address" // Sửa id thành "address"
+              value={formData.address}
               onChange={handleChange}
             >
               <option value="">Chọn khu vực</option>
@@ -142,16 +120,16 @@ const Register = ({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="flex flex-col gap-2">
-              <label className="text-[#767676] font-semibold" htmlFor="ownerName">
+              <label className="text-[#767676] font-semibold" htmlFor="nameOwnerCar">
                 Tên chủ xe*
               </label>
               <input
                 type="text"
                 className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
-                name="ownerName"
-                id="ownerName"
+                name="nameOwnerCar"
+                id="nameOwnerCar"
                 placeholder="Tên của bạn"
-                value={formData.ownerName}
+                value={formData.nameOwnerCar}
                 onChange={handleChange}
               />
             </div>
@@ -171,60 +149,41 @@ const Register = ({
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-[#767676] font-semibold" htmlFor="rentalCar">
+            <label className="text-[#767676] font-semibold" htmlFor="car_type">
               Xe cho thuê
             </label>
             <input
               type="text"
               className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
-              name="rentalCar"
-              id="rentalCar"
+              name="car_type"
+              id="car_type"
               placeholder="Loại xe của bạn"
-              value={formData.rentalCar}
+              value={formData.car_type}
               onChange={handleChange}
             />
           </div>
+
+          {/* Thêm phần chọn loại bằng cấp */}
           <div className="flex flex-col gap-2">
-            <label className="text-[#767676] font-semibold">
-              Bằng lái xe
+            <label className="text-[#767676] font-semibold" htmlFor="license">
+              Loại bằng cấp
             </label>
-            {formData.drivingLicenses.map((license, index) => (
-              <div key={index} className="flex flex-col md:flex-row gap-2 items-center">
-                <select
-                  className="px-2 py-[10px] border border-slate-300 rounded-xl flex-1"
-                  value={license.type}
-                  onChange={(e) => handleLicenseTypeChange(e, index)}
-                >
-                  <option value="">Chọn loại bằng</option>
-                  {licenseTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="file"
-                  multiple
-                  className="flex-1"
-                  onChange={(e) => handleLicenseFileChange(e, index)}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeLicenseField(index)}
-                  className="text-red-500 font-bold"
-                >
-                  X
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addLicenseField}
-              className="bg-green-300 hover:bg-green-500 text-white font-bold rounded-xl py-2 px-4 mt-2"
+            <select
+              className="px-2 text-slate-600 py-[10px] outline-none cursor-pointer border border-slate-300 rounded-xl"
+              name="license" // Sửa name thành "license"
+              id="license" // Sửa id thành "license"
+              value={formData.license}
+              onChange={handleChange}
             >
-              Thêm bằng lái
-            </button>
+              <option value="">Chọn loại bằng cấp</option>
+              {licenses.map((degree, index) => (
+                <option key={index} value={degree}>
+                  {degree}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div className="submit-rental mt-3">
             <button
               type="submit"

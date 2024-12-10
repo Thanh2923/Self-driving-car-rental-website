@@ -6,11 +6,10 @@ const authService = require('../services/authService')
 // when user want to request a car owner
 const CartOwnerRequest = async (req, res) => {
   try {
-    const data = req.body;
-
+    const dataToSend = req.body;
     const userId = req.user.userId;
     console.log(userId);
-    const requestData = { ...data, user_id: userId };
+    const requestData = { ...dataToSend, user_id: userId };
     console.log(requestData);
     const carOwnerRequest = await carOwnerRequests.carOwnerRequests(
       requestData

@@ -3,30 +3,53 @@ const carService = require("../services/carService");
 // Tạo xe mới
 const createCar = async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const data = req.body;
-    console.log(data);
+    const userId = req.user.userId; // Lấy userId từ token đã xác thực
+    const { car_name, description, price_per_day, availability_status, category_id } = req.body;
+    console.log(req.body)
+    // Lấy owner ID từ userId
     const getOwnerId = await carService.getOwnerId(userId);
     if (!getOwnerId) {
-      return res.status(400).json({ message: "Owner not found !" });
+      return res.status(400).json({ message: "Owner not found!" });
     }
     const ownerId = getOwnerId._id;
-    console.log(ownerId);
-    const getIdCategory = await carService.getIdCategory(req.body.category_id);
-    if (!getIdCategory) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    const categoryId = getIdCategory._id;
-    const carData = { ...data, category_id: categoryId, owner_id: ownerId };
+
+    // Kiểm tra danh mục xe (nếu cần)
+    // const getIdCategory = await carService.getIdCategory(category_id);
+    // if (!getIdCategory) {
+    //   return res.status(404).json({ message: "Category not found" });
+    // }
+    // const categoryId = getIdCategory._id;
+
+    // Lấy danh sách đường dẫn ảnh đã upload từ `req.files`
+    const imageUrls = req.files ? req.files.map(file => file.path) : [];
+
+    // Tạo dữ liệu xe mới
+    const carData = {
+      car_name,
+      description,
+      price_per_day,
+      availability_status,
+      category_id, // category_id đã gửi từ client
+      owner_id: ownerId,
+      image:imageUrls // Lưu danh sách đường dẫn ảnh
+    };
+
+    // Gọi service để lưu xe vào database
     const newCar = await carService.createCar(carData);
     if (!newCar) {
       return res.status(400).json({ message: "Failed to create car" });
     }
-    return res.status(201).json(newCar);
+
+    return res.status(201).json({
+      message: "Car created successfully!",
+      car: newCar,
+    });
   } catch (error) {
+    console.error("Error in createCar:", error);
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 // Lấy danh sách tất cả xe
 const getAllCars = async (req, res) => {
