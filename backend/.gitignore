@@ -20,7 +20,7 @@ dist/
 temp/
 .tmp/
 # env files (can opt-in for committing if needed)
-.env
+# .env
 # Cache của npm và yarn
 .npm
 .yarn/cache

@@ -19,10 +19,7 @@ const Middleware = {
     } else {
       res.status(401).json(`You're not authentication`);
     }
-  },
-
-
-
+  }, 
 
   verifyTokenRole: (roles) => {
     return (req, res, next) => {
@@ -49,6 +46,7 @@ const Middleware = {
         .status(403)
         .json({ message: "You are not the owner of this car" });
     }
+
     if (checkOwner.status !== "Approved") {
       return res
         .status(403)

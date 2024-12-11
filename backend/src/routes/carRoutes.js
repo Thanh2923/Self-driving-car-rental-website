@@ -12,7 +12,6 @@ router.post(
   "/",
   Middleware.verifyToken,
   Middleware.verifyOwnerCar,
- 
   upload.array('images', 5), // Cho phép tối đa 5 ảnh
   carController.createCar
 );

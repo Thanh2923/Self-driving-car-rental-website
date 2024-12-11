@@ -4,10 +4,13 @@ const bookingService = require("../services/bookingService");
 const createBooking = async (req, res) => {
   try {
     const userId = req.user.userId;
+    console.log(`userId ${userId}`);
     const data = req.body;
+    console.log(req.body);
     console.log(data.car_id);
     const checkCarId = await bookingService.checkCarId(data.car_id);
-    console.log(`${checkCarId}`);
+
+    console.log(`${checkCarId}this is car_id `);
     if (!checkCarId) {
       return res.status(404).json({ message: "Car not found" });
     }
@@ -15,7 +18,7 @@ const createBooking = async (req, res) => {
     const startDate = new Date(data.start_date);
     const endDate = new Date(data.end_date);
     const rentalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Chênh lệch ngày
-
+    console.log(rentalDays);
     if (rentalDays <= 0) {
       return res
         .status(400)
@@ -23,15 +26,23 @@ const createBooking = async (req, res) => {
     }
     // get price car rental
     const price = await bookingService.getPriceCar(data.car_id);
-    console.log(price);
+    // console.log(price);
     // Tính tổng tiền thuê xe
     const totalPrice = rentalDays * price.price_per_day;
+    console.log(totalPrice);
+    console.log({
+      ...data,
+      user_id: userId,
+      car_id: data.car_id,
+      total_price: totalPrice
+    });
     const bookingCar = {
       ...data,
       user_id: userId,
       car_id: data.car_id,
       total_price: totalPrice
     };
+    console.log(`booking ${bookingCar}`);
     const booking = await bookingService.createBooking(bookingCar);
 
     if (!booking) {
@@ -76,8 +87,15 @@ const getBookingById = async (req, res) => {
 const updateBooking = async (req, res) => {
   try {
     const id = req.params.id;
+    console.log(id);
     const data = req.body;
+
     const userId = req.user.userId;
+
+    console.log(`data ${data}`);
+    console.log(`userId ${userId}`);
+    console.log(data.start_date);
+    console.log(data.end_date);
 
     let totalPrice = null;
 
@@ -85,10 +103,11 @@ const updateBooking = async (req, res) => {
       // Tính số ngày thuê xe
       const startDate = new Date(data.start_date);
       const endDate = new Date(data.end_date);
+      console.log(startDate, endDate);
       const rentalDays = Math.ceil(
         (endDate - startDate) / (1000 * 60 * 60 * 24)
       ); // Chênh lệch ngày
-
+      console.log(rentalDays);
       if (rentalDays <= 0) {
         return res
           .status(400)
@@ -97,10 +116,13 @@ const updateBooking = async (req, res) => {
 
       // get price by car_id ;
       const price = await bookingService.getPriceCar(data.car_id);
+      console.log(price)
       // Tính tổng tiền thuê xe
       totalPrice = rentalDays * price.price_per_day;
+      console.log(totalPrice)
     }
     const updateData = { ...data, user_id: userId, total_price: totalPrice };
+    console.log(updateData)
     const updatedBooking = await bookingService.updateBooking(id, updateData);
 
     if (!updatedBooking)
@@ -113,7 +135,7 @@ const updateBooking = async (req, res) => {
 
 // Xóa booking
 const deleteBooking = async (req, res) => {
-  try { 
+  try {
     const id = req.params.id;
     const deletedBooking = await bookingService.deleteBooking(id);
     if (!deletedBooking)
