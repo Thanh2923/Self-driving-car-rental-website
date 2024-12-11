@@ -8,7 +8,7 @@ const createBooking = async (data) => {
 const getAllBookings = async (userBooking) => {
   return await Booking.find({ user_id: userBooking })
     .populate("user_id", "name email") // Tham chiếu thông tin User
-    .populate("car_id", "car_name category_id"); // Tham chiếu thông tin Car
+    .populate("car_id", "car_name category_id image price_per_day"); // Tham chiếu thông tin Car
 };
 
 const getBookingById = async (id, userId) => {
@@ -31,8 +31,13 @@ const checkCarId = async (carId) => {
 };
 
 const getPriceCar = async (carId) => {
-  const price_per_day = await Car.findOne({ _id: carId });
-  return price_per_day;
+  try {
+    const price_per_day = await Car.findOne({ _id: carId });
+    return price_per_day;
+  } catch (err) {
+    console.log(err);
+    throw Error(err.message);
+  }
 };
 // check booking from Owner
 const findBooking = async (car_id) => {
@@ -47,19 +52,24 @@ const getAllCar = async (userId) => {
 };
 
 const getBookings = async (carIds) => {
-    const bookings = await Booking.find({ car_id: { $in: carIds } });
-    return bookings
+  return await Booking.find({ car_id: { $in: carIds } })
+    .populate("user_id", "name email") // Tham chiếu thông tin User
+    .populate("car_id", "car_name category_id image price_per_day"); // Tham chiếu thông tin Car
 };
 
 const checkBookingExist = async (bookingId) => {
-    const checkBooking = await Booking.findById(bookingId);
-    return checkBooking
+  const checkBooking = await Booking.findById(bookingId);
+  return checkBooking;
 };
 
 const updateStatusBooking = async (bookingId, status) => {
-    const updateStatus = await Booking.findByIdAndUpdate(bookingId, { status: status }, { new: true });
-    return updateStatus
-}
+  const updateStatus = await Booking.findByIdAndUpdate(
+    bookingId,
+    { status: status },
+    { new: true }
+  );
+  return updateStatus;
+};
 module.exports = {
   createBooking,
   getAllBookings,
@@ -69,5 +79,8 @@ module.exports = {
   checkCarId,
   getPriceCar,
   findBooking,
-  getAllCar,getBookings,checkBookingExist,updateStatusBooking
+  getAllCar,
+  getBookings,
+  checkBookingExist,
+  updateStatusBooking
 };
