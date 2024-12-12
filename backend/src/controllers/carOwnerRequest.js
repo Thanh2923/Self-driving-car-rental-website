@@ -8,17 +8,13 @@ const CartOwnerRequest = async (req, res) => {
   try {
     const dataToSend = req.body;
     const userId = req.user.userId;
-    console.log(userId);
     const requestData = { ...dataToSend, user_id: userId };
-    console.log(requestData);
     const carOwnerRequest = await carOwnerRequests.carOwnerRequests(
       requestData
     );
     if (!carOwnerRequest) {
       return res.status(400).json({ data:[] });
     }
-    console.log(carOwnerRequest);
-    // return res.json(201).json({ message: carOwnerRequest });
     return res
       .status(201)
       .json({ message: "Request created successfully", data: carOwnerRequest });
@@ -60,11 +56,9 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
 
   const { id } = req.params; // id  cartRequest
   const { status, message } = req.body;
-  console.log(id, status, message);
   
   try {
     const getUserOwner = await carOwnerRequests.getCarOwnerRequestById(id);
-    console.log(getUserOwner);
     if (!getUserOwner) {
       return res.status(400).json({ data:[]});
     }
@@ -79,8 +73,6 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
     }
 
     const getEmail = await carOwnerRequests.getEmail(getUserOwner.user_id);
-
-    console.log(getEmail);
 
       const roleName =  status === "Approved" ? "ownerCar" : "user" ;
    

@@ -11,6 +11,24 @@ const getAllBookings = async (userBooking) => {
     .populate("car_id", "car_name category_id image price_per_day"); // Tham chiếu thông tin Car
 };
 
+const getAllBookingsRoleAdmin = async () => {
+    try {
+      // Lấy tất cả các booking không cần userId
+      const bookings = await Booking.find()
+        .populate("user_id", "name email")  // Tham chiếu thông tin người dùng
+        .populate("car_id", "car_name category_id image price_per_day");  // Tham chiếu thông tin xe
+  
+      if (!bookings || bookings.length === 0) {
+        return { message: "No bookings found" };
+      }
+  
+      return bookings;
+    } catch (err) {
+      throw new Error("Error fetching bookings: " + err.message);
+    }
+  };
+  
+
 const getBookingById = async (id, userId) => {
   return await Booking.findOne({ _id: id, user_id: userId })
     .populate("user_id", "name email")
@@ -82,5 +100,6 @@ module.exports = {
   getAllCar,
   getBookings,
   checkBookingExist,
-  updateStatusBooking
+  updateStatusBooking,
+  getAllBookingsRoleAdmin
 };

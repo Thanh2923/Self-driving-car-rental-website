@@ -13,9 +13,14 @@ const UserTable = ({ session,users, onEdit, onDelete,currentPage,limit }) => {
             <th className="px-4 py-2 text-left">Mật khẩu</th>
             <th className="px-4 py-2 text-left">Phone</th>
             {isUser ? 
-            (  <th className="px-4 py-2 text-left">Vai trò</th>)
-            :
-            <th className="px-4 py-2 text-left">Hành động</th> }
+             <>
+              <th className="px-4 py-2 text-left">Vai trò</th>
+              <th className="px-4 py-2 text-left">Hành động</th>
+             
+             </>
+            
+            :  <th className="px-4 py-2 text-left">Hành động</th>
+             }
           </tr>
         </thead>
         <tbody>

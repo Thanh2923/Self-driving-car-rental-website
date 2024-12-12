@@ -5,6 +5,7 @@ const Middleware = require("../controllers/middleware");
 const revenue = require("../controllers/revenueController");
 // Routes CRUD cho Payment
 router.get("/totalRevenue", revenue.calculatorTotalRevenue);
+router.get("/totalRevenue/:id", revenue.getTotalRevenueByUser);
 router.post(
   "/",
   Middleware.verifyToken,

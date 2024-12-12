@@ -61,7 +61,7 @@ const SignUp = ({
     setLoading(false);
     setTimeout(()=>{
       handleSignUp();
-    },1000)
+    },2000)
   };
   
 

@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import WrapContainer from "@/components/wrapContainer/wrapContainer";
 import { FaCarOn } from "react-icons/fa6";

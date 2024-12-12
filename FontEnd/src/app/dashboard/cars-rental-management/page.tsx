@@ -42,6 +42,7 @@ interface Booking {
   updatedAt?: string;
 }
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const urlImage = process.env.NEXT_PUBLIC_API_IMAGE;
 const Page = () => {
   const [statusUpdate , setStatus] = useState('Pending')
   const router = useRouter(); 
@@ -59,6 +60,7 @@ const Page = () => {
       if (response.status === 200) { 
         toast.success("Cập nhật trạng thái thành công");
         setStatus(status)
+        fetchRequests();
      
       } else {
         toast.error("Cập nhật thất bại");
@@ -72,34 +74,50 @@ const Page = () => {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true); // Trạng thái loading
   const [bookingList, setBookingList] = useState<Booking[]>([]);
-  console.log(session);
-  console.log(session.token);
-  useEffect(() => {
-    const fetchData = async () => {
-      if (session?.token) {
-        try {
-          const response = await axios.get(`${baseURL}/owner/listBooking`, {
-            headers: {
-              Authorization: `Bearer ${session?.token}` // Gửi token với prefix "Bearer"
-            }
-          });
-          console.log(response);
-          const data = response.data;
-          console.log(`data`, data);
-          setBookingList(response.data.bookings);
-        } catch (error) {
-          console.log(error);
-          setBookingList([]); // Trả về mảng rỗng nếu lỗi
-        } finally {
-          setLoading(false);
+  const isUser = session ? session?.user.role_id === "admin" : "";
+    const fetchRequests = async () => {
+      try {
+        console.log("Session Token:", session?.token); // Log token để debug
+
+        const response = await axios.get(`${baseURL}/owner/listBooking`, {
+          headers: {
+            Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
+          },
+        });
+        const data = Array.isArray(response.data.bookings) ? response.data.bookings : [];
+        setBookingList(data)
+        
+      } catch (error) {
+        
+          console.error("Unexpected error:", error.message);
         }
-      } else {
-        alert("Token not found !");
+     
+    }
+  
+
+  useEffect(() => {
+    if(session?.user.role_id === "ownerCar"){
+      fetchRequests();
+    }else{
+      const fetchRequest = async () => {
+        try {
+
+  
+          const response = await axios.get(`${baseURL}/bookingRoleAdmin`);
+          const data = Array.isArray(response.data.bookings) ? response.data.bookings : [];
+          setBookingList(data)
+          console.log(data)
+        } catch (error) {
+          
+            console.error("Unexpected error:", error.message);
+          }
+       
       }
-    };
-    fetchData();
-  }, [session, status , statusUpdate]);
-  console.log(bookingList);
+      fetchRequest();
+    } 
+
+  }, [session, status]);
+
   return (
     <div>
       <ToastContainer />
@@ -107,28 +125,34 @@ const Page = () => {
       <h1 className="text-[1.4rem] mt-5 text-slate-600/70 font-bold">
         Danh Sách Booking{" "}
       </h1>
-      <div className="headerBooking  flex justify-between text-center items-center bg-black/90 p-3 rounded-xl mt-5">
-        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-white filter">
+      <div className="headerBooking  flex justify-between text-center items-center bg-red-100 p-3 rounded-xl mt-5">
+        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-red-500 filter">
           STT
         </div>
-        <div className="text-[1rem] w-[calc(100%-80%)] font-semibold text-white nameCar">
+        <div className="text-[1rem] w-[calc(100%-80%)] font-semibold text-red-500 nameCar">
           Tên xe
         </div>
-        <div className="text-[1rem] w-[calc(100%-80%)]  font-semibold text-white nameCar">
+        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-red-500 nameCar">
           Ảnh
         </div>
-        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-white nameCar">
+        <div className="text-[1rem] w-[calc(100%-80%)]  font-semibold text-red-500 nameCar">
           Tổng ngày thuê
         </div>
-        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-white nameCar">
+        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-red-500 nameCar">
           Tổng tiền
         </div>
-        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-white nameCar">
-          Trạng thái
-        </div>
-        <div className="text-[1rem] w-[calc(100%-80%)] font-semibold text-white nameCar">
-          Hành động
-        </div>
+      {!isUser ? 
+
+      <>
+        <div className="text-[1rem] w-[calc(100%-90%)]  font-semibold text-red-500 nameCar">
+        Trạng thái
+      </div>
+      <div className="text-[1rem] w-[calc(100%-80%)] font-semibold text-red-500 nameCar">
+        Hành động
+      </div>
+      </>
+           : ""
+   }
       </div>
       <div className="container">
         {bookingList.map((item, index) => (
@@ -142,14 +166,14 @@ const Page = () => {
             <div className="text-[1rem] w-[calc(100%-80%)]  font-500 text-black/70 nameCar">
               {item.car_id.car_name}
             </div>
-            <div className="text-[1rem] w-[calc(100%-80%)] font-500 text-black/70 nameCar">
+            <div className="text-[1rem] w-[calc(100%-90%)] font-500 text-black/70 nameCar">
               <img
-                src={`${item.car_id.image[0]}`}
+                src={`${urlImage}/${item.car_id.image[0]}`}
                 alt=""
                 className="w-12 m-auto h-12 rounded-xl"
               />
             </div>
-            <div className="text-[1rem]  w-[calc(100%-90%)] font-500 text-black/70 nameCar">
+            <div className="text-[1rem]  w-[calc(100%-80%)] font-500 text-black/70 nameCar">
               {Math.ceil(
                 (new Date(item.end_date) - new Date(item.start_date)) /
                   (1000 * 60 * 60 * 24)
@@ -168,20 +192,23 @@ const Page = () => {
                 {item.status}
               </span>
             </div>
-            <div className="text-[1rem] flex gap-2  font-semibold w-[calc(100%-80%)]  nameCar">
-              <button
-                onClick={() => confirmUpdateStatus(item._id , 'Approved')}
-                className="p-2   border border-green-500 rounded-xl text-green-300/80 font-bold hover:bg-green-400/80 hover:text-green-500 transition-all duration-300 cursor-pointer"
-              >
-                Chấp nhận
-              </button>
-              <button
-                onClick={() => confirmUpdateStatus(item._id , 'Rejected')}
-                className="p-2   border border-green-500 rounded-xl text-green-300/80 font-bold hover:bg-green-400/80 hover:text-green-500 transition-all duration-300 cursor-pointer"
-              >
-                Từ chối
-              </button>
-            </div>
+            {!isUser ? 
+           ( <div className="text-[1rem] flex gap-2  font-semibold w-[calc(100%-80%)]  nameCar">
+            <button
+              onClick={() => confirmUpdateStatus(item._id , 'Approved')}
+              className="p-2   border border-green-500 rounded-xl text-green-300/80 font-bold hover:bg-green-400/80 hover:text-green-500 transition-all duration-300 cursor-pointer"
+            >
+              Chấp nhận
+            </button>
+            <button
+              onClick={() => confirmUpdateStatus(item._id , 'Rejected')}
+              className="p-2   border border-green-500 rounded-xl text-green-300/80 font-bold hover:bg-green-400/80 hover:text-green-500 transition-all duration-300 cursor-pointer"
+            >
+              Từ chối
+            </button>
+          </div>)   : ""
+          }
+           
           </div>
         ))}
       </div>

@@ -25,7 +25,14 @@ const Header = () => {
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [forgetPass, setForgetPass] = useState(false);
-  const { data: session } = useSession();
+  const { data: session } = useSession(); // Lấy session trực tiếp
+  const [currentSession, setCurrentSession] = useState(null); // State để lưu session
+
+  useEffect(() => {
+    if (session) {
+      setCurrentSession(session);
+    }
+  }, [session]); // Chỉ chạy khi session thay đổi
 
   
   const handleClick = () => {
@@ -83,6 +90,14 @@ const Header = () => {
               {/* <FaCar className="hidden lg:block text-[1.4rem] motion-preset-wobble  " /> */}
             </Link>
             <div className="iconMenu flex items-center gap-3">
+            {currentSession?.user.role_id !=="user" ? "" : 
+                <Link
+                href="/userBooking"
+                className="text-white text-[1rem] px-[16px] py-[12px] link-md overflow-hidden relative  group group motion-preset-bounce  lg:motion-delay-[500ms]"
+              >
+                Danh sách thuê xe
+                <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-all duration-300"></span>
+              </Link>}
               <Link
                 href="/about"
                 className="text-white text-[1rem] px-[16px] py-[12px] link-md overflow-hidden relative  group motion-preset-bounce  lg:motion-delay-[400ms]"
@@ -92,7 +107,7 @@ const Header = () => {
               </Link>
               
               <>
-               {session?.user.role_id ==="ownerCar" ? "" : 
+               {currentSession?.user.role_id ==="ownerCar" ? "" : 
                 <Link
                 href="/owner/register"
                 className="text-white text-[1rem] px-[16px] py-[12px] link-md overflow-hidden relative  group group motion-preset-bounce  lg:motion-delay-[500ms]"
@@ -101,7 +116,7 @@ const Header = () => {
                 <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-all duration-300"></span>
               </Link>}
               </>
-              {!session ? 
+              {!currentSession ? 
               
             <>
              <Link
@@ -127,7 +142,7 @@ const Header = () => {
           href=""
           className="text-white hover:text-white duration-300 transition-all text-[1rem] px-[16px] py-[12px] hidden border rounded-md lg:block relative overflow-hidden motion-preset-bounce  lg:motion-delay-[700ms]"
         >
-          {session.user?.email}
+          {currentSession.user?.email}
         </Link> 
 
         <li className="absolute w-full mt-[2px] text-blue-500 top-[100%] bg-white left-0 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity  duration-300 ">
@@ -164,7 +179,7 @@ const Header = () => {
                 </div>
                 <div className="text-center mt-10">
                   <ul className="block">
-                   {!session ? 
+                   {!currentSession ? 
                   <>
                     <li className="py-5 text-[1.4rem] relative overflow-hidden">
                       <Link
@@ -193,7 +208,7 @@ const Header = () => {
                       href=""
                       className="relative inline-block before:absolute before:left-0 before:bottom-0 before:w-full before:h-[2px] before:bg-black before:transform before:scale-x-0 hover:before:scale-x-100 before:transition-all before:duration-300 before:mt-2"
                     >
-                      {session.user?.email}
+                      {currentSession.user?.email}
                     </Link>
                   </li>
                   <li className="py-5 text-[1.4rem] absolute top-5 left-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300 overflow-hidden z-10">
@@ -201,7 +216,7 @@ const Header = () => {
                       href=""
                       className="relative inline-block before:absolute before:left-0 before:bottom-0 before:w-full before:h-[2px] before:bg-black before:transform before:scale-x-0 hover:before:scale-x-100 before:transition-all before:duration-300 before:mt-2"
                     >
-                      {session.user?.email}
+                      {currentSession.user?.email}
                     </Link>
                   </li>
                 </ul>

@@ -72,7 +72,7 @@ const EditBookingModal = ({ isOpen, onClose, booking, onConfirm }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-1/3 text-center">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-3/3 text-center">
         <h2 className="text-xl font-semibold mb-4">Cập nhật Booking</h2>
 
         <div className="mt-3 flex gap-4">
@@ -180,11 +180,13 @@ interface Booking {
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 const Page = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [bookingList, setBookingList] = useState<Booking[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenUpdate, setIsModalOpenUpdate] = useState(false);
   const [itemIdToDelete, setItemIdToDelete] = useState(null);
   const [itemIdUpdate, setItemIdUpdate] = useState(null);
-  console.log(itemIdToDelete);
   const handleDelete = (itemId: string) => {
     setItemIdToDelete(itemId);
     setIsModalOpen(true); // Mở modal khi muốn xóa
@@ -260,35 +262,41 @@ const Page = () => {
   const cancelUpdate = () => {
     setIsModalOpenUpdate(false); // Đóng modal nếu người dùng hủy bỏ
   };
-  const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [bookingList, setBookingList] = useState<Booking[]>([]);
+
+ 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/booking`, {
-          headers: {
-            Authorization: `Bearer ${session.token}` // Gửi token với prefix "Bearer"
-          }
-        });
-        const data = response.data;
-        setBookingList(Array.isArray(data) ? data : []);
-      } catch (error) {
-        setBookingList([]); // Trả về mảng rỗng nếu lỗi
-      } finally {
-        setLoading(false);
+      if (session?.token) {
+        try {
+          console.log(session?.token); // In ra token (đã sửa lỗi từ "ession" thành "session")
+          const response = await axios.get(`${baseURL}/booking`, {
+            headers: {
+              Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
+            },
+          });
+          const data = response.data;
+          setBookingList(data); // Cập nhật bookingList với dữ liệu nhận được
+        } catch (error) {
+          console.error('Error fetching bookings:', error); // Log lỗi để debug
+          setBookingList([]); // Trả về mảng rỗng nếu xảy ra lỗi
+        } finally {
+          setLoading(false); // Tắt trạng thái loading
+        }
       }
     };
-    fetchData();
-  }, []);
+  
+    fetchData(); // Gọi hàm fetchData
+  
+  }, [session, status]); // Phụ thuộc vào session và status
+  
   if (loading) return <p>Loading...</p>;
   const handlePayment = async (bookingId: string) => {
     // Gọi API để thực hiện thanh toán
-
+    console.log(bookingId)
     try {
       const response = await axios.post(
         `${baseURL}/payment`,
-        { bookingId: bookingId },
+        { bookingId },
         {
           headers: {
             Authorization: `Bearer ${session.token}`

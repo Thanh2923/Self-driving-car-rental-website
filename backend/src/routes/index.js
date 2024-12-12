@@ -10,12 +10,15 @@ const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
 const carOwnerRouter = require("./carOwnerRequestRoutes");
 const ownerRouter = require("./ownerRouter");
+const bookingController = require("../controllers/bookingController");
+
 // Định nghĩa các route
 
 router.use("/role", roleRoutes);
 router.use("/car", carRoutes);
 router.use("/auth", authRoutes);
 router.use("/booking", bookingRoutes);
+router.use("/bookingRoleAdmin", bookingController.getAllBookingsRoleAdmin);
 router.use("/payment", paymentRoutes);
 router.use("/event", eventRoutes);
 router.use("/category", categoryRoutes);

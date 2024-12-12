@@ -48,8 +48,16 @@ const Page = () => {
   const [totalDays, setTotalDays] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
   const { nameCar } = useParams(); 
-  const { data: session, status } = useSession();
   const [car, setCar] = useState<Product | null>(null);
+  const urlImage = process.env.NEXT_PUBLIC_API_IMAGE;
+   const { data: session } = useSession(); // Lấy session trực tiếp
+    const [currentSession, setCurrentSession] = useState(null); // State để lưu session
+    useEffect(() => {
+      if (session) {
+        setCurrentSession(session);
+      }
+    }, [session]); // Chỉ chạy khi session thay đổi
+  
   useEffect(() => {
     const fetchCarDetails = async () => {
       const request = await axios.get(`${baseURL}/car/getCarById/${nameCar}`);
@@ -105,33 +113,37 @@ const Page = () => {
       driver_option: false,
       car_id: nameCar
     };
-    console.log(`bookingData ${bookingData}`);
 
     try {
-      const response = await axios.post(`${baseURL}/booking`, bookingData, {
-        headers: {
-          Authorization: `Bearer ${session.token}` // Gửi token với prefix "Bearer"
+      if(currentSession && currentSession.token){
+
+        const response = await axios.post(`${baseURL}/booking`, bookingData, {
+          headers: {
+            Authorization: `Bearer ${currentSession.token}` // Gửi token với prefix "Bearer"
+          }
+        });
+        if (response.status === 301) {
+          return toast.success("Vui lòng đăng nhập để đặt xe!");
         }
-      });
-      if (response.status === 301) {
-        return toast.success("Vui lòng đăng nhập để đặt xe!");
-      }
-      if (response.status === 401) {
-        return toast.success("Vui lòng đăng kí để đặt xe!");
-      }
-      if (response.status === 200) {
-
-        return toast.success("Thuê xe thành công!");
-
-      } else if (response.status === 201) {
-        toast.success("Thuê xe thành công. Đợi xát xát nhận.");
-
-        setTimeout(() => {
-          router.push("/userBooking");
-        }, 3000); // Trì hoãn 3 giây
+        if (response.status === 401) {
+          return toast.success("Vui lòng đăng kí để đặt xe!");
+        }
+        if (response.status === 200) {
+  
+          return toast.success("Thuê xe thành công!");
+  
+        } else if (response.status === 201) {
+          toast.success("Thuê xe thành công. Đợi xát xát nhận.");
+  
+          setTimeout(() => {
+            router.push("/userBooking");
+          }, 3000); // Trì hoãn 3 giây
+        }
+      }else{
+        toast.warning("Vui lòng đăng nhập , token hết hạn nên phải đăng nhập lại");
       }
     } catch (error) {
-      toast.error("Vui lòng đăng nhập , token hết hạn nên phải đăng nhập lại");
+      toast.error(error);
     }
   };
   return (
@@ -143,7 +155,7 @@ const Page = () => {
             <div className="cover-imageContainer md:flex justify-between gap-4">
               <div className="image-main">
                 <img
-                  src={`${car?.image[0]}`}
+                  src={`${urlImage}/${car?.image[0]}`}
                   alt=""
                   className="rounded-2xl object-cover opacity-90 hover:opacity-100 duration-300 transition-all cursor-pointer"
                 />
@@ -151,21 +163,21 @@ const Page = () => {
               <div className="sub-image hidden md:flex flex-col gap-2">
                 <div className="item-image">
                   <img
-                    src={`${car?.image[1]}`}
+                    src={`${urlImage}/${car?.image[1]}`}
                     alt=""
                     className="rounded-2xl lg:h-[225px] md:h-[140px] opacity-90 hover:opacity-100 duration-300 transition-all cursor-pointer lg:w-[370px] object-cover w-[350px]"
                   />
                 </div>
                 <div className="item-image">
                   <img
-                    src={`${car?.image[2]}`}
+                    src={`${urlImage}/${car?.image[2]}`}
                     alt=""
                     className="rounded-2xl lg:h-[225px] md:h-[140px] opacity-90 hover:opacity-100 duration-300 transition-all cursor-pointer lg:w-[370px] object-cover w-[350px]"
                   />
                 </div>
                 <div className="item-image">
                   <img
-                    src={`${car?.image[3]}`}
+                    src={`${urlImage}/${car?.image[3]}`}
                     alt=""
                     className="rounded-2xl lg:h-[225px] md:h-[140px] opacity-90 hover:opacity-100 duration-300 transition-all cursor-pointer lg:w-[370px] object-cover w-[350px]"
                   />

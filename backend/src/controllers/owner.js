@@ -1,27 +1,24 @@
 const carService = require("../services/carService");
 // const mongoose = require("mongoose");
 const bookingService = require("../services/bookingService");
+
+
 const getListBooking = async (req, res) => {
   try {
     //get userid
     // user see list car
     const userId = req.user.userId;
-    console.log(userId);
     const getOwnerId = await carService.getOwnerId(userId);
     const ownerId = getOwnerId._id;
-    console.log(ownerId);
     const cars = await carService.getAllCars(ownerId);
-    console.log(cars);
     if (!cars || cars.length === 0) {
       return res.status(404).json({ message: "No car found" });
     }
 
     // Lấy danh sách `car_id`
-    const carIds = cars.map((car) => car._id);
-    console.log(carIds)
+    const carIds = cars.data.map((car) => car._id);
     // Tìm bookings
     const bookings = await bookingService.getBookings(carIds);
-    console.log("Bookings for cars:", bookings);
     if (!bookings || bookings.length === 0) {
       return res
         .status(404)

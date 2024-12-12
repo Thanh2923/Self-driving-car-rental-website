@@ -1,3 +1,4 @@
+"use client"
 import CategoryManagement from "@/components/dashboard/CategoryManagement/CategoryManagement"
 
 const page = () => {

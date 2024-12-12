@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,19 +30,26 @@ ChartJS.register(
 
 const MainHomeAdmin = () => {
   const [totalRevenues, setTotalRevenue] = useState(0);
+  const { data: session, status } = useSession();
   useEffect(() => {
     const fetchTotalRevenue = async () => {
-      const res = await axios.get(`${baseURL}/payment/totalRevenue`);
-      console.log(res);
-      if (res.status == 200) { 
-        setTotalRevenue(res.data.totalRevenue);
-      }
-      
-    };
-    fetchTotalRevenue();
-  }, [totalRevenues]);
-  console.log(totalRevenues);
+          try {
+            const res = await axios.get(`${baseURL}/payment/totalRevenue`);
+            console.log(res);
 
+            // Kiểm tra mã trạng thái HTTP và gán tổng doanh thu
+            if (res.status === 200 && res.data.totalRevenue !== undefined) {
+              setTotalRevenue(res.data.totalRevenue);
+            } else {
+              console.error('Total revenue data not found');
+            }
+          } catch (error) {
+            console.error('Error fetching total revenue:', error);
+          }
+        }
+    
+    fetchTotalRevenue();
+  }, []);
   const data = {
     labels: [
       "Tháng 1",

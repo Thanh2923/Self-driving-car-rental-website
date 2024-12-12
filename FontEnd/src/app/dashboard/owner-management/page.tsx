@@ -1,3 +1,4 @@
+"use client"
 import CarOwnerRequestTable from "@/components/dashboard/CarOwnerManagement/CarOwnerManagement"
 
 const page = () => {

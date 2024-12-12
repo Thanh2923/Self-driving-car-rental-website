@@ -5,22 +5,12 @@ const createCar = async (req, res) => {
   try {
     const userId = req.user.userId; // Lấy userId từ token đã xác thực
     const { car_name, description, price_per_day, availability_status, category_id } = req.body;
-    console.log(req.body)
-    // Lấy owner ID từ userId
     const getOwnerId = await carService.getOwnerId(userId);
     if (!getOwnerId) {
       return res.status(400).json({ message: "Owner not found!" });
     }
     const ownerId = getOwnerId._id;
 
-    // Kiểm tra danh mục xe (nếu cần)
-    // const getIdCategory = await carService.getIdCategory(category_id);
-    // if (!getIdCategory) {
-    //   return res.status(404).json({ message: "Category not found" });
-    // }
-    // const categoryId = getIdCategory._id;
-
-    // Lấy danh sách đường dẫn ảnh đã upload từ `req.files`
     const imageUrls = req.files ? req.files.map(file => file.path) : [];
 
     // Tạo dữ liệu xe mới
@@ -57,7 +47,6 @@ const createCar = async (req, res) => {
       const ownerId = getOwnerId._id;
       const { page, limit } = req.query;
       const cars = await carService.getAllCars(ownerId,page, limit);
-      console.log(cars)
       return res.status(200).json(cars);
     } catch (error) {
       return res.status(500).json({ error: error.message });

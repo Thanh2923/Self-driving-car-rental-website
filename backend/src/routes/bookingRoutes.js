@@ -15,4 +15,6 @@ router.get("/:id", Middleware.verifyToken, bookingController.getBookingById); //
 router.patch("/:id", Middleware.verifyToken, bookingController.updateBooking); // Cập nhật booking
 router.delete("/:id", bookingController.deleteBooking); // Xóa booking
 
+
+
 module.exports = router;

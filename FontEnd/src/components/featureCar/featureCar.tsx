@@ -9,7 +9,6 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Car {
   id: string;
@@ -25,16 +24,14 @@ interface Car {
 const FeatureCar = () => {
   const [cars, setCars] = useState<Car[]>([]); // Danh sách xe
   const [loading, setLoading] = useState(true); // Trạng thái loading
-   console.log(cars)
   const [showTimeRental, setShowTimeRental] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
-
+  
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-=======
-
+  const urlImage = process.env.NEXT_PUBLIC_API_IMAGE;
   useEffect(() => {
     
     const fetchCars = async () => {
@@ -46,7 +43,7 @@ const FeatureCar = () => {
 
  
 
-        const data = response.data.getAll;
+        const data = response.data.data;
         setCars(Array.isArray(data) ? data : []);
       } catch (error) {
         toast.error("Lỗi khi lấy danh sách xe");
@@ -81,7 +78,7 @@ const FeatureCar = () => {
                 >
                   <div className="w-[301px] overflow-hidden h-[225.5px] ">
                     <img
-                      src={`${item.image[0]}`}
+                      src={`${urlImage}/${item.image[0]}`}
                       alt="image car"
                       className="rounded-2xl hover:scale-125 cursor-pointer duration-500 transition-all"
                     />

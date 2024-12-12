@@ -22,7 +22,7 @@ const EventManagement = () => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [showForm, setShowForm] = useState(false);
   useEffect(() => {
-    dispatch(fetchEvents({ page: currenPage, limit: limit }))
+    dispatch(fetchEvents({ page: currentPage, limit: limit }))
   }, [dispatch,currentPage]);
 
   // Update an existing event

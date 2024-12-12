@@ -1,3 +1,4 @@
+"use client"
 import UserManagement from '@/components/dashboard/UserManagement/UserManagement'
 import React from 'react'
 

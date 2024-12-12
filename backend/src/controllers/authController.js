@@ -13,7 +13,6 @@ const register = async (req, res) => {
 
 const addUser = async (req, res) => {
   try {
-    console.log(req.body)
     const users = await authService.addUser(req.body);
     res.status(201).json({ message: "Đăng ký thành công", users });
   } catch (error) {

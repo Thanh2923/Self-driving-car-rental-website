@@ -24,6 +24,7 @@ const UserManagement = () => {
   const [usersToDelete, setUsersToDelete] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [showForm, setShowForm] = useState(false); 
+  const isUser = session?.user.role_id ==="admin";
   useEffect(() => {
    
     if(session?.user.role_id ==="admin")
@@ -41,7 +42,8 @@ const UserManagement = () => {
    if(error !==null) {
     toast.error(error)
    }else{
-    dispatch(fetchUsers({ page: currentPage, limit: 5 }));
+    
+    isUser ?  dispatch(fetchUsers({ page: currentPage, limit: 5 })) :   dispatch(fetchUserById(session?.user.id));
     toast.success("Thêm mới thành công")
     setTimeout(()=>{
       setShowForm(false);
@@ -57,7 +59,7 @@ const UserManagement = () => {
     if(error !==null) {
       toast.error(error)
      }else{
-      dispatch(fetchUsers({ page: currentPage, limit: 5 }));
+      isUser ?  dispatch(fetchUsers({ page: currentPage, limit: 5 })) :   dispatch(fetchUserById(session?.user.id));
       toast.success("Cập nhật thành công")
       setTimeout(()=>{
         setShowForm(false);
@@ -102,6 +104,8 @@ const UserManagement = () => {
         {showModal ?  <ActionDelete onDelete={handleDeleteUser} onClose={handleCancelFormDelete}/> : "" } 
       <h1 className="text-xl font-bold mb-4">Quản lý Người Dùng</h1>
       {/* Nút thêm người dùng */}
+
+      {session?.user.role_id === "admin" ?
       <div className="my-3 text-right">
         <button
           onClick={() => setShowForm(true)}
@@ -109,7 +113,7 @@ const UserManagement = () => {
         >
           Thêm Người Dùng
         </button>
-      </div>
+      </div> : ""}
 
       {/* Hiển thị form Thêm hoặc Sửa */}
       {showForm && (

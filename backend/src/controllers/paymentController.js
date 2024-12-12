@@ -5,28 +5,9 @@ const bookingService = require("../services/bookingService");
 const createPayment = async (req, res) => {
   try {
      
-    const { bookingId } = req.body;
-    console.log(bookingId)
+    const {bookingId}  = req.body;
     // Here ! check valid booking id exist
     const booking = await paymentService.booking(bookingId);
-    console.log(booking.status)
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found !" });
-    }
-    // check HERE ! booking status
-    if(booking.status === 'pending') {
-      return res.status(400).json({ message: "Booking status is pending ! Please wait for the admin to confirm" });
-    }
-    if (booking.status === "completed") {
-        return res
-          .status(400)
-          .json({ message: "Booking success , can't create payment" });
-      }
-    if (booking.status !== "approved") {
-      return res
-        .status(400)
-        .json({ message: "Please wait for booking status approved !" });
-    }
     console.log(booking.total_price);
     const transaction = await paymentService.createTransaction(
       booking._id,
