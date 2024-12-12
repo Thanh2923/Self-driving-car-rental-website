@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       ref: 'Role',  // Liên kết với bảng Role
       required: true,
     },
+    avatar: {
+      type: String,  // Lưu trữ URL hoặc tên file của ảnh đại diện
+      required: false,  // Trường này không bắt buộc
+    },
   },
   {
     timestamps: true, // Thêm trường createdAt và updatedAt tự động

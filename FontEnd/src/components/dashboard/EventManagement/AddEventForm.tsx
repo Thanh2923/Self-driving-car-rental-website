@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEvent } from '@/redux/event/eventThunks';
 const AddEventForm = ({setShowForm, onCancel }) => {
@@ -13,6 +13,12 @@ const AddEventForm = ({setShowForm, onCancel }) => {
     dispatch(addEvent({ event_name, image, event_date, description }))
     setShowForm(false)
   }
+
+  useEffect(() => {
+    // Set giá trị ngày hiện tại làm mặc định cho trường ngày
+    const currentDate = new Date().toISOString().split('T')[0];
+    setEventDay(currentDate);
+  }, []);
   return (
     <div className='w-full fixed z-20 bg-slate-400 bg-opacity-20 flex h-screen top-0 left-0 justify-center items-center'>
       <div className='w-[50%] bg-white flex justify-center shadow-lg rounded-lg'>
@@ -47,16 +53,17 @@ const AddEventForm = ({setShowForm, onCancel }) => {
 
           {/* Event Day */}
           <div>
-            <label htmlFor="event_date" className="block text-sm font-medium text-gray-700">Ngày Sự Kiện</label>
-            <input 
-              type="date" 
-              id="event_date"
-              value={event_date} 
-              onChange={(e) => setEventDay(e.target.value)} 
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
-              required 
-            />
-          </div>
+      <label htmlFor="event_date" className="block text-sm font-medium text-gray-700">Ngày Sự Kiện</label>
+      <input 
+        type="date" 
+        id="event_date"
+        value={event_date} 
+        onChange={(e) => setEventDay(e.target.value)} 
+        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+        required 
+        min={new Date().toISOString().split('T')[0]} // Đặt ngày nhỏ nhất là ngày hiện tại
+      />
+    </div>
 
           {/* Description */}
           <div>

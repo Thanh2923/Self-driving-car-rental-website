@@ -5,28 +5,35 @@ const createEvent = async (data) => {
     return await event.save();
 };
 
-const getAllEvents = async (page = 1, limit = 5) => {
-    // Tính toán số lượng mục cần bỏ qua
-    const skip = (page - 1) * limit;
+const getAllEvents = async (page, limit) => {
+    if (page && limit) {
+        // Nếu có page và limit, thực hiện phân trang
+        const skip = (page - 1) * limit;
 
-    // Lấy danh sách sự kiện với phân trang
-    const events = await Event.find()
-        .skip(skip) // Bỏ qua các mục trước trang hiện tại
-        .limit(limit) // Giới hạn số lượng mục trả về mỗi trang
-        .sort({ event_date: -1 }); // Sắp xếp theo ngày (mới nhất trước)
+        const events = await Event.find()
+            .skip(skip) // Bỏ qua các mục trước trang hiện tại
+            .limit(limit) // Giới hạn số lượng mục trả về mỗi trang
+            .sort({ event_date: -1 }); // Sắp xếp theo ngày (mới nhất trước)
 
-    // Lấy tổng số lượng sự kiện để tính tổng số trang
-    const totalEvents = await Event.countDocuments();
+        const totalEvents = await Event.countDocuments(); // Tổng số sự kiện
+        const totalPages = Math.ceil(totalEvents / limit); // Tính tổng số trang
 
-    // Tính tổng số trang
-    const totalPages = Math.ceil(totalEvents / limit);
-
-    return {
-        data: events,
-        totalEvents,
-        totalPages,
-        currentPage: page
-    };
+        return {
+            data: events,
+            totalEvents,
+            totalPages,
+            currentPage: page
+        };
+    } else {
+        // Nếu không có page và limit, trả về tất cả các sự kiện
+        const events = await Event.find().sort({ event_date: -1 }); // Sắp xếp theo ngày
+        return {
+            data: events,
+            totalEvents: events.length,
+            totalPages: 1,
+            currentPage: 1
+        };
+    }
 };
 
 const getEventById = async (id) => {

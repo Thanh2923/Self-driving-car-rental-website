@@ -15,6 +15,10 @@ router.post(
   upload.array('images', 5), // Cho phép tối đa 5 ảnh
   carController.createCar
 );
+
+router.get(
+  "/",carController.carAll
+);
  
 router.get(
   "/getListCar",
@@ -23,7 +27,7 @@ router.get(
   carController.getAllCars
 ); // Lấy danh sách xe
 router.get("/getCarById/:id", carController.getCarById); // Lấy xe theo ID
-router.patch("/:id", carController.updateCar); // Cập nhật xe
+router.patch("/:id", upload.array('images', 5), carController.updateCar); // Cập nhật xe
 router.delete("/:id", carController.deleteCar); // Xóa xe
 
 module.exports = router;

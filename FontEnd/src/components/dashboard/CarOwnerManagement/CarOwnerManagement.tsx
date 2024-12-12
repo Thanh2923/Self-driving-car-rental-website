@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams } from 'next/navigation';
 import { useSession } from "next-auth/react";
-
+import Pagination from '@/components/pagination/Pagination';
 const CarOwnerRequestTable = () => {
   const { data: session, status } = useSession();
   const [carOwner, setCarOwner] = useState([]);
@@ -11,15 +12,17 @@ const CarOwnerRequestTable = () => {
   const [showConfirmation, setShowConfirmation] = useState(false); // Hiển thị form xác nhận
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
   const carOwnerData = carOwner.data ?? [];
-  console.log(carOwnerData);
-
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || 1);
+  const limit = 5;
   useEffect(() => {
+
     const fetchRequests = async () => {
       if (session?.token) {
         try {
           console.log("Session Token:", session?.token); // Log token để debug
 
-          const res = await axios.get(`${baseURL}/carOwnerRequest/viewCarOwnerRequest`, {
+          const res = await axios.get(`${baseURL}/carOwnerRequest/viewCarOwnerRequest?page=${currentPage}&limit=${limit}`, {
             headers: {
               Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
             },
@@ -111,7 +114,7 @@ const CarOwnerRequestTable = () => {
           <tbody>
             {carOwnerData.map((request, index) => (
               <tr key={request._id} className="border-b">
-                <td className="px-4 py-2">{index + 1}</td>
+                <td className="px-4 py-2">{(currentPage - 1) * limit + index + 1}</td>
                 <td className="px-4 py-2">{request.nameOwnerCar}</td>
                 <td className="px-4 py-2">{request.phoneNumber}</td>
                 <td className="px-4 py-2">{request.car_type}</td>
@@ -183,7 +186,18 @@ const CarOwnerRequestTable = () => {
           </div>
         </div>
       )}
+
+      
+      {/* Phân trang */}
+      <div className="pt-4">
+      <Pagination
+        currentPage={currentPage}
+        totalPages={carOwner.totalPages}
+       
+      />
+      </div>
     </div>
+    
   );
 };
 

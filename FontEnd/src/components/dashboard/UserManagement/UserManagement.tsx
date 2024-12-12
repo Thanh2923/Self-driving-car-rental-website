@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react"
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AddUserForm from './AddUserForm';
@@ -7,23 +8,32 @@ import UserTable from './UserTable';
 import Pagination from '@/components/pagination/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { addUser, deleteUser, fetchUsers,updateUser } from '@/redux/users/usersThunk';
+import { addUser, deleteUser,fetchUserById, fetchUsers,updateUser } from '@/redux/users/usersThunk';
 import ActionDelete from '../ActionDelete';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const UserManagement = () => {
+  const { data: session, status } = useSession();
   const dispatch = useDispatch<AppDispatch>();
-  const limit = 4;
+  const limit = 5;
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || 1);
   const { users, loading, error } = useSelector((state: RootState) => state.users);
+  console.log(users)
   const [showModal, setShowModal] = useState(false);
   const [usersToDelete, setUsersToDelete] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [showForm, setShowForm] = useState(false); 
   useEffect(() => {
-    dispatch(fetchUsers({ page: currentPage, limit: limit }));
-  }, [currentPage, dispatch]);
+   
+    if(session?.user.role_id ==="admin")
+      { dispatch(fetchUsers({ page: currentPage, limit: limit })); }
+    else{
+   
+       dispatch(fetchUserById(session?.user.id))
+      }
+    
+  }, [session,currentPage, dispatch]);
 
 
   const handleAddUser = (userData: any) => {
@@ -106,6 +116,7 @@ const UserManagement = () => {
         <div className="mb-6">
           {editingUser ? (
             <EditUserForm
+            session={session}
               user={editingUser}
               onSubmit={handleUpdateUserByid}
               onCancel={handleCancelForm}
@@ -120,7 +131,7 @@ const UserManagement = () => {
       <div className="mb-6">
       
   
-          <UserTable users={users.data} onEdit={handleEditUser} onDelete={handleShowDeleteUser} currentPage={users.currentPage} limit={limit} />
+          <UserTable session={session} users={ users.data} onEdit={handleEditUser} onDelete={handleShowDeleteUser} currentPage={users.currentPage} limit={limit} />
         
       </div>
 

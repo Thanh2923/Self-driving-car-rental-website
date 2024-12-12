@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 
-const AddCarForm = ({ onSubmit, onCancel }) => {
+const AddCarForm = ({ handleAddCar,onCancel }) => {
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const { categories, loading } = useSelector((state) => state.category);
@@ -18,7 +18,7 @@ const AddCarForm = ({ onSubmit, onCancel }) => {
   const [availabilityStatus, setAvailabilityStatus] = useState('Available');
   const [categoryId, setCategoryId] = useState('');
   const [images, setImages] = useState([]);
-
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
   // Fetch categories
   useEffect(() => {
     dispatch(fetchCategories({}));
@@ -56,14 +56,13 @@ const AddCarForm = ({ onSubmit, onCancel }) => {
 
     if (session?.token) {
       try {
-        const response = await axios.post('http://localhost:8080/api/car', formData, {
+        const response = await axios.post(`${baseURL}/car`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${session.token}`,
           },
         });
-        console.log('Thêm xe thành công:', response.data);
-        onSubmit(response.data);
+        handleAddCar();
       } catch (error) {
         console.error('Lỗi khi thêm xe:', error.response?.data || error.message);
       }
@@ -106,7 +105,7 @@ const AddCarForm = ({ onSubmit, onCancel }) => {
                     <img
                       src={URL.createObjectURL(image)}
                       alt={`Preview ${index}`}
-                      className="h-20 w-20 object-cover rounded-md"
+                      className="h-10 w-10 object-cover rounded-md"
                     />
                     <button
                       type="button"

@@ -20,7 +20,7 @@ const generateToken = (userId, fullName, email, phone, role_id) => {
   }
 
   // Tạo token với payload và secret key (từ biến môi trường)
-  const token = jwt.sign(payload, secretKey, { expiresIn: '5h' });
+  const token = jwt.sign(payload, secretKey, { expiresIn: '2d' });
 
   return token;
 };

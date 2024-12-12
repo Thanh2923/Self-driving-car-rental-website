@@ -15,7 +15,7 @@ const CartOwnerRequest = async (req, res) => {
       requestData
     );
     if (!carOwnerRequest) {
-      return res.status(400).json({ message: "Request not found" });
+      return res.status(400).json({ data:[] });
     }
     console.log(carOwnerRequest);
     // return res.json(201).json({ message: carOwnerRequest });
@@ -30,13 +30,28 @@ const CartOwnerRequest = async (req, res) => {
 
 const ViewCarOwnerRequest = async (req, res) => {
   try {
-    const getAll = await carOwnerRequests.getAllCarOwnerRequest();
-    if (!getAll || getAll.length === 0) {
-      return res.status(404).json({ message: "No found" });
+    // Lấy page và limit từ query, nếu không có thì sử dụng giá trị mặc định
+    const { page = 1, limit = 10 } = req.query;
+
+    // Gọi service để lấy tất cả yêu cầu của chủ xe với phân trang
+    const result = await carOwnerRequests.getAllCarOwnerRequest(page, limit);
+
+    // Kiểm tra nếu không có dữ liệu
+    if (!result || result.data.length === 0) {
+      return res.status(404).json({ data: [], message: "No data found" });
     }
-    return res.status(200).json({ data: getAll, success: true });
+
+    // Trả về dữ liệu kèm theo tổng số bản ghi và số trang
+    return res.status(200).json({
+      data: result.data,
+      total: result.totalCarOwnerRequests,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      success: true,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Internal Server Error" });
+    // Lỗi từ server
+    return res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
 
@@ -51,7 +66,7 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
     const getUserOwner = await carOwnerRequests.getCarOwnerRequestById(id);
     console.log(getUserOwner);
     if (!getUserOwner) {
-      return res.status(400).json({ message: "Request not found" });
+      return res.status(400).json({ data:[]});
     }
     getUserOwner.status = status;
 
@@ -67,9 +82,9 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
 
     console.log(getEmail);
 
-    // update role
-    if (status === "Approved") {
-      const ownerCarRole = await authService.getRoleByName("ownerCar");
+      const roleName =  status === "Approved" ? "ownerCar" : "user" ;
+   
+      const ownerCarRole = await authService.getRoleByName(roleName);
       if (!ownerCarRole) {
         return res.status(400).json({ message: "Role not found" });
       }
@@ -78,7 +93,8 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
         getUserOwner.user_id,
         ownerCarRole._id
       );
-    }
+    
+
     //
     const TOKEN = "12ca1b117ae28fb61627c0973da2586f";
 
@@ -92,7 +108,7 @@ const UpdateCarOwnerRequestStatus = async (req, res) => {
     };
     const recipients = [
       {
-        email: "rencooking09202@gmail.com"
+        email: "thannv2923@gmail.com"
       }
     ];
 

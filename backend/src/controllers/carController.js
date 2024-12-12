@@ -49,24 +49,20 @@ const createCar = async (req, res) => {
   }
 };
  
-const getAllCars = async (req, res) => {
-  try {
-    // user see list car
-    const userId = req.user.userId;
-    console.log(userId);
-    const getOwnerId = await carService.getOwnerId(userId);
-    const ownerId = getOwnerId._id;
-    console.log(ownerId);
-    const cars = await carService.getAllCars(ownerId);
-    console.log(cars);
-    if (!cars || cars.length === 0) {
-      return res.status(404).json({ message: "No car found" });
+  const getAllCars = async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      
+      const getOwnerId = await carService.getOwnerId(userId);
+      const ownerId = getOwnerId._id;
+      const { page, limit } = req.query;
+      const cars = await carService.getAllCars(ownerId,page, limit);
+      console.log(cars)
+      return res.status(200).json(cars);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
     }
-    return res.status(200).json(cars);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
+  };
 
 // Lấy thông tin xe theo ID
 const getCarById = async (req, res) => {
@@ -89,11 +85,26 @@ const updateCar = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
+    
     if (id === null || id === undefined) {
       return res.status(400).json({ message: "ID is required" });
     }
 
-    const updatedCar = await carService.updateCar(id, data);
+    const existingCar = await carService.getCarById(id);
+    if (!existingCar) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+
+    const imageUrls = req.files ? req.files.map(file => file.path) : [];
+    const updatedImages = imageUrls.length > 0 ? imageUrls : existingCar.images;
+
+    // Cập nhật dữ liệu
+    const updatedData = {
+      ...data,
+      image: updatedImages,
+    };
+
+    const updatedCar = await carService.updateCar(id, updatedData);
     if (!updatedCar) return res.status(404).json({ message: "Car not found" });
     return res.status(200).json(updatedCar);
   } catch (error) {
@@ -116,11 +127,20 @@ const deleteCar = async (req, res) => {
 // lấy tất cả car của tất cả chử ve
 const carAll = async (req, res) => {
   try {
-    const getAll = await carService.getAll();
-    console.log(getAll);
-    return res
-      .status(200)
-      .json({ message: "Get all car successfully", getAll });
+    // Lấy giá trị page và limit từ query string hoặc sử dụng giá trị mặc định
+    const { page = 1, limit = 10 } = req.query;
+
+    // Gọi service lấy tất cả xe với phân trang
+    const getAll = await carService.getAll(page, limit);
+
+    // Trả về kết quả
+    return res.status(200).json({
+      message: "Get all car successfully",
+      data: getAll.data, // Dữ liệu xe
+      totalCars: getAll.totalCars, // Tổng số xe
+      totalPages: getAll.totalPages, // Tổng số trang
+      currentPage: getAll.currentPage, // Trang hiện tại
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

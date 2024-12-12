@@ -12,14 +12,20 @@ const createEvent = async (req, res) => {
 
 // Lấy tất cả sự kiện
 const getAllEvents = async (req, res) => {
-    const { page = 1, limit = 5 } = req.query;
+    const { page, limit } = req.query; // Lấy page và limit từ query
     try {
-        const events = await eventService.getAllEvents(Number(page), Number(limit));
+        // Nếu có page và limit, thực hiện phân trang, ngược lại lấy toàn bộ sự kiện
+        const events = page && limit 
+            ? await eventService.getAllEvents(Number(page), Number(limit))
+            : await eventService.getAllEvents();
+
         return res.status(200).json(events);
     } catch (error) {
+        console.error("Error fetching events:", error);
         return res.status(500).json({ error: error.message });
     }
 };
+
 
 // Lấy sự kiện theo ID
 const getEventById = async (req, res) => {

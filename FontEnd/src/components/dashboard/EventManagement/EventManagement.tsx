@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const EventManagement = () => {
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || 1);
-  const limit = 4;
+  const limit = 5;
   const dispatch = useDispatch<AppDispatch>();
   const [showModal, setShowModal] = useState(false);
   const { events, loading, error } = useSelector((state) => state.events);
@@ -22,7 +22,7 @@ const EventManagement = () => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [showForm, setShowForm] = useState(false);
   useEffect(() => {
-    dispatch(fetchEvents({ page: currentPage, limit: limit }))
+    dispatch(fetchEvents({ page: currenPage, limit: limit }))
   }, [dispatch,currentPage]);
 
   // Update an existing event

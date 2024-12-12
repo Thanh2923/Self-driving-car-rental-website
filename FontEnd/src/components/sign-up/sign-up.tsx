@@ -45,43 +45,35 @@ const SignUp = ({
   const onSubmit = async (data: any) => {
     setLoading(true);
     const { email, password } = data;
-
+  
     const res = await signIn("credentials", {
-      redirect: false,
+      redirect: false, // Không chuyển hướng tự động, tự điều khiển luồng
       email,
       password,
     });
-
+  
     if (res?.error) {
       toast.error("Đăng nhập thất bại!");
       setLoading(false);
       return;
     }
-
-    // Sau khi đăng nhập thành công, session sẽ được cập nhật
-    if (session) {
-      console.log(session.user?.role_id); // Kiểm tra role_id
-      if (session.user?.role_id === "user" || session.user?.role_id === "ownerCar") {
-        toast.success("Đăng nhập thành công!");
-        router.push("/dashboard"); // Điều hướng nếu là user hoặc ownerCar
-      } else {
-        toast.success("Đăng nhập thành công!");
-        router.push("/"); // Điều hướng về trang chủ
-      }
-    }
-
+    toast.success("Đăng nhập thành công!");
     setLoading(false);
-    handleSignUp(); // Đóng form sau khi đăng nhập thành công
+    setTimeout(()=>{
+      handleSignUp();
+    },1000)
   };
+  
 
   useEffect(() => {
-    if (session) {
-      // Kiểm tra role_id trong session sau khi session có giá trị
-      if (session.user?.role_id === "user") {
-       console.log(session.user?.role_id)
+    if (status === "authenticated" && session) {
+      if (session.user?.role_id === "admin" || session.user?.role_id === "ownerCar"  ) {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
       }
     }
-  }, [session]);
+  }, [session, status]);
 
   return (
     <div className="opacity-95 fixed top-0 left-0 w-full h-full z-[1000] bg-black/50">

@@ -7,63 +7,74 @@ import CarTable from './CarTable';
 import Pagination from '@/components/pagination/Pagination';
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+import ActionDelete from '../ActionDelete';
+import { useSearchParams } from 'next/navigation';
 
 const CarManagement = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-  const [cars, setCars] = useState([]);
+    const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || 1);
   const [editingCar, setEditingCar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [message, setMessage] = useState('');
   const { data: session, status } = useSession();
   const [carOwner, setCarOwner] = useState([]);
+   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  useEffect(() => {
-    const fetchRequests = async () => {
-      if (session?.token) {
-        try {
-          console.log("Session Token:", session?.token); // Log token để debug
-
-          const res = await axios.get(`${baseURL}/car/getListCar`, {
-            headers: {
-              Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
-            },
-          });
-
-          setCarOwner(res.data); // Cập nhật dữ liệu vào state
-        } catch (error) {
-          if (error.response) {
-            console.error("Failed to fetch requests:", error.response.data);
-          } else {
-            console.error("Unexpected error:", error.message);
-          }
+  const limit=5;
+  const fetchRequests = async () => {
+    if (session?.token) {
+      try {
+        const getcart = session.user.role_id === "admin" ? "/" : "/getListCar";
+        console.log("Token hiện tại:", session.token); // Debug token
+        const res = await axios.get(`${baseURL}/car${getcart}?page=${currentPage}&limit=${limit}`, {
+          headers: {
+            Authorization: `Bearer ${session.token}`, // Gửi token với prefix "Bearer"
+          },
+        });
+  
+        console.log("Dữ liệu trả về từ API:", res.data); // Debug response
+        setCarOwner(res.data);
+      } catch (error) {
+        if (error.response) {
+          console.error("Lỗi từ server:", error.response.data); // Lỗi phía server
+        } else if (error.request) {
+          console.error("Không nhận được phản hồi từ server:", error.request); // Server không phản hồi
+        } else {
+          console.error("Lỗi khác:", error.message); // Lỗi bất thường
         }
-      } else {
-        console.warn("User is not authenticated or token is missing");
+  
+        setCarOwner([]); // Đảm bảo cập nhật danh sách thành mảng rỗng nếu lỗi
       }
-    };
-
-    fetchRequests();
-  }, [session, status]);
-
-  // Add a new car
-  const handleAddCar = (carData) => {
-    const newCar = {
-      ...carData,
-      _id: uuidv4(), // Generate a unique ID using UUID
-    };
-    setCars([...cars, newCar]);
-    setShowForm(false);
-    setMessage('Car added successfully!');
+    } else {
+      console.warn("Token không hợp lệ hoặc người dùng chưa đăng nhập.");
+    }
   };
+  
+  
+  useEffect(() => {
+    if(carOwner){
+      fetchRequests(); 
+    }
+  
+  }, [session,currentPage]);
+  
+  
+  const handleAddCar = ()=>{
+    toast.success("Thêm mới thành công!")
+     setShowForm(false);
+     fetchRequests();
+   }
+  
 
-  // Update an existing car
-  const handleUpdateCar = (updatedCar) => {
-    setCars(cars.map((car) =>
-      car._id === updatedCar._id ? updatedCar : car
-    ));
-    setShowForm(false);
-    setMessage('Car updated successfully!');
-  };
+     
+  const handleSubmit = ()=>{
+    toast.success("Cập nhật thành công!")
+     setShowForm(false);
+     fetchRequests();
+   }
+  
 
   // Edit car
   const handleEditCar = (car) => {
@@ -72,9 +83,21 @@ const CarManagement = () => {
   };
 
   // Delete a car
-  const handleDeleteCar = (carId) => {
-    setCars(cars.filter((car) => car._id !== carId));
-    setMessage('Car deleted successfully!');
+  const handleDeleteCar = async() => {
+    try {
+      const res = await axios.delete(`${baseURL}/car/${categoryToDelete}`);
+      if (res.status === 200) { // Kiểm tra mã trạng thái
+        fetchRequests();
+        toast.success("Xoá thành công!")
+        setShowModal(false);
+      } else {
+        console.error('Xóa xe không thành công:', res.statusText);
+      }
+    } catch (error) {
+      console.error('Lỗi khi xóa xe:', error.response?.data || error.message);
+    }
+  
+
   };
 
   // Cancel form
@@ -93,44 +116,56 @@ const CarManagement = () => {
     }
   };
 
+  const handleCancelFormDelete = () => {
+    setShowModal(false);
+  };
+
+  const handleShowDeleteCar = (Id) => {
+    setCategoryToDelete(Id)
+   setShowModal(true);
+ };
+
+  
+
 
   return (
     <div className="p-6 bg-white">
-      <h1 className="text-xl font-bold mb-4">Car Management</h1>
+        {showModal ?  <ActionDelete onDelete={handleDeleteCar} onClose={handleCancelFormDelete}/> : "" } 
+      <ToastContainer/>
+      <h1 className="text-xl font-bold mb-4">Quản lý Xe</h1>
 
-      {/* Add car button */}
-      <div className="my-3 text-right">
+      {session?.user.role_id ==="admin" ? "" : <div className="my-3 text-right">
         <button
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-md"
         >
-          Add Car
+          Thêm Xe
         </button>
-      </div>
+      </div> }
 
       {/* Display form for adding or editing a car */}
       {showForm && (
         <div className="mb-6">
           {editingCar ? (
-            <EditCarForm car={editingCar} onSubmit={handleUpdateCar} onCancel={handleCancelForm} />
+            <EditCarForm car={editingCar}   onCancel={handleCancelForm} handleSubmitCar={handleSubmit} />
           ) : (
-            <AddCarForm onSubmit={handleAddCar} onCancel={handleCancelForm} />
+            <AddCarForm  handleAddCar={handleAddCar} onCancel={handleCancelForm} />
           )}
         </div>
       )}
 
-      {/* Show message */}
-      {message && <div className="mb-4 text-green-500">{message}</div>}
+   
 
       {/* Car table */}
       <div className="mb-6">
-        <CarTable cars={carOwner} onEdit={handleEditCar} onDelete={handleDeleteCar} />
+        <CarTable cars={carOwner.data} onEdit={handleEditCar} onDelete={handleShowDeleteCar} session={session}  currentPage={carOwner.currentPage} limit={limit}  />
       </div>
-      <div className='pt-4'>
+  {/* Phân trang */}
+  <div className="pt-4">
       <Pagination
         currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
+        totalPages={carOwner.totalPages}
+       
       />
       </div>
     </div>

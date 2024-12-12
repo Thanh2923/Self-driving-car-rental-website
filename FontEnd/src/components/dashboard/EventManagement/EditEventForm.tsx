@@ -61,7 +61,7 @@ const EditEventForm = ({ event, onSubmit, onCancel }) => {
           <div>
           {image ===event.image ? (
                   <img
-                    src={`${ulrImgae}/${image}`} // Đảm bảo đường dẫn đúng
+                    src={`${ulrImgae}/src/uploads/${image}`} // Đảm bảo đường dẫn đúng
                     alt={event.event_name}
                     className="w-[100px] h-[100px] object-cover"
                   />

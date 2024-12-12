@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUsers, addUser, updateUser, deleteUser } from './usersThunk';
+import { fetchUsers, addUser, updateUser, deleteUser ,fetchUserById} from './usersThunk';
 
 const initialState = {
   users: [],    // Mảng người dùng
@@ -23,6 +23,19 @@ const usersSlice = createSlice({
         state.users = action.payload; // Gán dữ liệu trả về từ API cho users
       })
       .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message;
+      })
+
+      .addCase(fetchUserById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload; // Gán dữ liệu trả về từ API cho users
+      })
+      .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message;
       })

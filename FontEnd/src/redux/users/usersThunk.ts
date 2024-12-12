@@ -19,6 +19,19 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
+
+export const fetchUserById = createAsyncThunk(
+  'users/fetchUserById',
+  async ( id , { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${baseURL}/users/${id}`); // Lấy thông tin người dùng theo id
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch user.' });
+    }
+  }
+);
+
 // Add a new user
 export const addUser = createAsyncThunk(
   'users/addUser',

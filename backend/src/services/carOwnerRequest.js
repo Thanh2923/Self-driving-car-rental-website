@@ -12,12 +12,41 @@ const carOwnerRequests = async (requestData) => {
   return await carOwnerRequest.save();
 };
 
-const getAllCarOwnerRequest = async () => {
+const getAllCarOwnerRequest = async (page = 1, limit = 10) => {
   try {
-    return await CarOwnerRequest.find();
+    // Tạo điều kiện query (nếu cần)
+    const query = {};
+
+    // Xác định giá trị skip (số dòng bỏ qua) cho phân trang
+    const skip = (page - 1) * limit;
+
+    // Truy vấn dữ liệu với phân trang nếu có
+    let carOwnerRequestsQuery = CarOwnerRequest.find(query);
+
+    // Nếu có limit và page, thì sử dụng skip và limit
+    if (limit) {
+      carOwnerRequestsQuery = carOwnerRequestsQuery.skip(skip).limit(limit);
+    }
+
+    // Tính tổng số lượng CarOwnerRequest
+    const totalCarOwnerRequests = await CarOwnerRequest.countDocuments(query);
+
+    // Lấy dữ liệu
+    const carOwnerRequests = await carOwnerRequestsQuery;
+
+    // Tính số trang tổng cộng
+    const totalPages = Math.ceil(totalCarOwnerRequests / limit);
+
+    // Trả về dữ liệu cùng với tổng số lượng và số trang
+    return {
+      data: carOwnerRequests,
+      totalCarOwnerRequests,
+      totalPages,
+      currentPage: page,
+    };
   } catch (error) {
     console.log(error);
-    throw Error(error.message);
+    throw new Error(error.message);
   }
 };
 

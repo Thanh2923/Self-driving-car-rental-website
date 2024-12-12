@@ -5,8 +5,7 @@ const Middleware = require("../controllers/middleware");
 
 // Routes CRUD cho Booking
 
-router.post(
-  "/",
+router.post("/",
   Middleware.verifyToken,
   Middleware.verifyOnlyUserBooking,
   bookingController.createBooking

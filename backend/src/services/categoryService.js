@@ -13,7 +13,7 @@ const getAllCategories = async (page, limit) => {
       // Lấy danh sách categories với phân trang
       const categories = await Category.find()
         .skip(skip) // Bỏ qua các mục trước trang hiện tại
-        .limit(limit); // Giới hạn số lượng mục trả về mỗi trang
+        .limit(limit); 
   
       // Lấy tổng số lượng các category để tính tổng số trang
       const totalCategories = await Category.countDocuments();
