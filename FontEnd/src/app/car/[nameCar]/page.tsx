@@ -1,23 +1,16 @@
 "use client";
-import Link from "next/link";
+
 import React from "react";
+
 // import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { FiDelete } from "react-icons/fi";
-import { MdKeyboardArrowDown } from "react-icons/md";
 import WrapContainer from "@/components/wrapContainer/wrapContainer";
 import { FcOvertime } from "react-icons/fc";
-import { FaShareAlt } from "react-icons/fa";
-import { FaRegHeart } from "react-icons/fa6";
-import { MdOutlineShare } from "react-icons/md";
 import { CiStar } from "react-icons/ci";
 import { SiGoogleanalytics } from "react-icons/si";
-import { CiWarning } from "react-icons/ci";
 import { BiSolidDiscount } from "react-icons/bi";
 import { MdNavigateNext } from "react-icons/md";
-
-import TimeCarRental from "@/components/timeCarRental/timeCarRental";
 import { useState, useEffect } from "react";
 import Description from "@/components/cars/description";
 import { useParams } from "next/navigation";
@@ -29,7 +22,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-
+import { useRouter } from "next/navigation";
 import {
   Popover,
   PopoverContent,
@@ -47,14 +40,14 @@ interface Product {
   createdAt?: string;
   updatedAt?: string;
 }
+
 const Page = () => {
   // const [date, setDate] = React.useState<Date>();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [totalDays, setTotalDays] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
-  const { nameCar } = useParams();
-  const [showTimeRental, setShowTimeRental] = useState<boolean>(false);
+  const { nameCar } = useParams(); 
   const { data: session, status } = useSession();
   const [car, setCar] = useState<Product | null>(null);
   useEffect(() => {
@@ -66,6 +59,7 @@ const Page = () => {
 
     if (nameCar) fetchCarDetails();
   }, [nameCar]);
+  const router = useRouter();
 
   const handleCalculateDays = () => {
     setError(null);
@@ -114,15 +108,11 @@ const Page = () => {
     console.log(`bookingData ${bookingData}`);
 
     try {
-      const response = await axios.post(
-        `${baseURL}/booking`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.accessToken}` // Gửi token với prefix "Bearer"
-          }
-        },
-        bookingData
-      );
+      const response = await axios.post(`${baseURL}/booking`, bookingData, {
+        headers: {
+          Authorization: `Bearer ${session.token}` // Gửi token với prefix "Bearer"
+        }
+      });
       if (response.status === 301) {
         return toast.success("Vui lòng đăng nhập để đặt xe!");
       }
@@ -130,19 +120,23 @@ const Page = () => {
         return toast.success("Vui lòng đăng kí để đặt xe!");
       }
       if (response.status === 200) {
+
         return toast.success("Thuê xe thành công!");
-      } else {
-        return toast.error("Thuê xe không thành công. Vui lòng thử lại.");
+
+      } else if (response.status === 201) {
+        toast.success("Thuê xe thành công. Đợi xát xát nhận.");
+
+        setTimeout(() => {
+          router.push("/userBooking");
+        }, 3000); // Trì hoãn 3 giây
       }
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
-      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau!");
+      toast.error("Vui lòng đăng nhập , token hết hạn nên phải đăng nhập lại");
     }
   };
   return (
     <>
       <ToastContainer />
-
       <section className="">
         <WrapContainer>
           <div className="cover-car p-5">
@@ -264,6 +258,7 @@ const Page = () => {
                               Đồng ý chọn ngày
                             </button>
                           </div>
+
                         </div>
                       </div>
                       {error && (
@@ -273,7 +268,7 @@ const Page = () => {
                       )}
                       {!error && (
                         <h1 className="font-bold text-red-500 text-[24px] my-2">
-                          Tổng ngày thuê : {totalDays}
+                          Tổng ngày thuê : {totalDays} ngày
                         </h1>
                       )}
                       <div className="info flex items-center gap-2 mt-3">

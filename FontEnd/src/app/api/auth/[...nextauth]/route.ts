@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
       session.user.roleName = token.roleName;
 
       session.token = token.accessToken;
-      return session;
+
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

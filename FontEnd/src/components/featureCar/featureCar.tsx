@@ -6,8 +6,9 @@ import { SiGoogleanalytics } from "react-icons/si";
 import { FaLocationDot } from "react-icons/fa6";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Car {
@@ -30,18 +31,25 @@ const FeatureCar = () => {
   const [endDate, setEndDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
+
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
+=======
+
   useEffect(() => {
     
     const fetchCars = async () => {
       try {
+
         const response = await axios.get<Car[]>(
           `${baseURL}/car/getAllCars`
         );
+
+ 
+
         const data = response.data.getAll;
         setCars(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách xe:", error);
+        toast.error("Lỗi khi lấy danh sách xe");
         setCars([]); // Trả về mảng rỗng nếu lỗi
       } finally {
         setLoading(false);
@@ -49,10 +57,16 @@ const FeatureCar = () => {
     };
     fetchCars();
   }, []);
-  if (loading) return <p>Đang tải danh sách xe...</p>;
+  if (loading)
+    return (
+      <h2 className="text-center text-black/60 my-10 font-bold text-[1rem]">
+        Đang tải danh sách xe...
+      </h2>
+    );
   console.log(cars);
   return (
     <section className="feature_car">
+      <ToastContainer />
       <WrapContainer>
         <div className="p-5">
           <h2 className="text-center mb-[32px] text-[2rem] md:text-[2.25rem] font-bold">
@@ -86,9 +100,7 @@ const FeatureCar = () => {
                     </button>
                   </div>
                   <div className="desc_name">
-                    <p className="font-bold  text-[1.2rem]">
-                     {item.car_name}
-                    </p>
+                    <p className="font-bold  text-[1.2rem]">{item.car_name}</p>
                   </div>
                   <div className="desc_address flex items-center">
                     <div className="location-icon mr-1">
@@ -117,7 +129,7 @@ const FeatureCar = () => {
                     <div className="wrap-price flex items-center text-[#767676] font-[500]">
                       <span className="price text-[#767676] font-[500] text[.75rem]">
                         <span className="text-red-600 text[1rem] font-bold">
-                          1500k
+                          {item.price_per_day.toLocaleString("vi-VN")}
                         </span>
                       </span>
                       /ngày

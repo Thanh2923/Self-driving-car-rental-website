@@ -31,7 +31,7 @@ const carOwnerRequestSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-  license: {
+    license: {
     type: String,
     required: true
   },

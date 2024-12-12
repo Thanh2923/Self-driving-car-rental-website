@@ -11,13 +11,14 @@ const getListBooking = async (req, res) => {
     const ownerId = getOwnerId._id;
     console.log(ownerId);
     const cars = await carService.getAllCars(ownerId);
-
+    console.log(cars);
     if (!cars || cars.length === 0) {
       return res.status(404).json({ message: "No car found" });
     }
 
     // Lấy danh sách `car_id`
     const carIds = cars.map((car) => car._id);
+    console.log(carIds)
     // Tìm bookings
     const bookings = await bookingService.getBookings(carIds);
     console.log("Bookings for cars:", bookings);
@@ -27,7 +28,7 @@ const getListBooking = async (req, res) => {
         .json({ message: "No bookings found for your cars" });
     }
 
-    return res.status(200).json({ bookings });
+    return res.status(200).json({ bookings: bookings });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

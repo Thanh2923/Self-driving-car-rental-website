@@ -33,7 +33,6 @@ const createCar = async (req, res) => {
       owner_id: ownerId,
       image:imageUrls // Lưu danh sách đường dẫn ảnh
     };
-
     // Gọi service để lưu xe vào database
     const newCar = await carService.createCar(carData);
     if (!newCar) {
