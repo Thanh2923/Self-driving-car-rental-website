@@ -24,18 +24,19 @@ interface Car {
 const FeatureCar = () => {
   const [cars, setCars] = useState<Car[]>([]); // Danh sách xe
   const [loading, setLoading] = useState(true); // Trạng thái loading
-
+   console.log(cars)
   const [showTimeRental, setShowTimeRental] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
-  
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
+    
     const fetchCars = async () => {
       try {
         const response = await axios.get<Car[]>(
-          `http://localhost:8000/api/car/getAllCars`
+          `${baseURL}/car/getAllCars`
         );
         const data = response.data.getAll;
         setCars(Array.isArray(data) ? data : []);

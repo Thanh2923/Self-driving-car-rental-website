@@ -1,7 +1,7 @@
 "use client";
 import { signOut } from "next-auth/react"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WrapContainer from "../wrapContainer/wrapContainer";
 import Link from "next/link";
 import { IoMdMenu } from "react-icons/io";
@@ -20,14 +20,13 @@ import { useSession } from "next-auth/react"
 
 const Header = () => {
   const pathname = usePathname();
-  // const isAdminRoute = pathname.includes('/dashboard');
+  const isAdminRoute = pathname.includes('/dashboard');
   const [isOpen, setIsOpen] = useState(true);
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [forgetPass, setForgetPass] = useState(false);
   const { data: session } = useSession();
 
-  
   
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -48,9 +47,9 @@ const Header = () => {
     setForgetPass(!forgetPass);
   };
    
-  // if(isAdminRoute){
-  //   return
-  // }
+  if(isAdminRoute){
+    return
+  }
 
   return (
     <>
@@ -91,13 +90,17 @@ const Header = () => {
                 Về Chúng tôi
                 <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-all duration-300"></span>
               </Link>
-              <Link
+              
+              <>
+               {session?.user.role_id ==="ownerCar" ? "" : 
+                <Link
                 href="/owner/register"
                 className="text-white text-[1rem] px-[16px] py-[12px] link-md overflow-hidden relative  group group motion-preset-bounce  lg:motion-delay-[500ms]"
               >
                 Trở thành chủ xe
                 <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-all duration-300"></span>
-              </Link>
+              </Link>}
+              </>
               {!session ? 
               
             <>

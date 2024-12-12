@@ -5,6 +5,8 @@ import Image from "next/image";
 import { GrNext } from "react-icons/gr";
 import { GrPrevious } from "react-icons/gr";
 import PromotionImage from "./promotionImage";
+import { useSelector,useDispatch } from "react-redux";
+import { fetchEvents } from "@/redux/event/eventThunks";
 
 interface ListImagePromotion {
   id: number;
@@ -51,14 +53,20 @@ const listImagePromotion: ListImagePromotion[] = [
 ];
 
 const Promotion = () => {
+  const dispatch = useDispatch();
+  const { events, loading, error } = useSelector((state) => state.events);
+ const eventsData = Array.isArray(events.data) ? events.data : [];
+   const ulrImgae = process.env.NEXT_PUBLIC_API_IMAGE;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isShow, setIsShow] = useState<boolean>(false);
-  const [content, setContent] = useState<string | undefined>("");
-  const [imageUrl, setImageUrl] = useState<string | undefined>("");
+  const [description, setDescription] = useState<string | undefined>("");
+  const [image, setImage] = useState<string | undefined>("");
   const [isPaused , setIsPaused] = useState(false)
  
-
-  const totalItems = listImagePromotion.length;
+useEffect(()=>{
+  dispatch(fetchEvents({}))
+},[dispatch])
+  const totalItems = eventsData.length;
   const itemsPerView = 3; // Adjust for different screen sizes
   const maxIndex = totalItems - itemsPerView;
 
@@ -73,9 +81,10 @@ const Promotion = () => {
  
   const handleShowDetail = (id: number) => {
     console.log(id);
-    const getImage = listImagePromotion.find((item) => item.id === id);
-    setContent(getImage.content);
-    setImageUrl(getImage.url);
+    const getImage = eventsData.find((item) => item._id === id);
+    console.log(getImage)
+    setDescription(getImage.description);
+    setImage(getImage.image);
     setIsShow(!isShow);
   };
   const handleIsShow = () => {
@@ -96,8 +105,8 @@ const Promotion = () => {
       {isShow ? (
         <PromotionImage
           handleIsShow={handleIsShow}
-          content={content}
-          imageUrl={imageUrl}
+          content={description}
+          imageUrl={image}
         />
       ) : null}
       <section className="promotion -mt-[100px]   p-5">
@@ -114,16 +123,16 @@ const Promotion = () => {
             <div className="main-container " onMouseEnter={() => setIsPaused(true)} onMouseLeave={()=> setIsPaused(false)}>
               <div className="relative slider-image   overflow-hidden">
                 <div className="flex   gap-2 transition-transform duration-500 ease-in-out" style={{transform : `translateX(-${currentIndex * (100 / itemsPerView) }% )`}}>
-                  {listImagePromotion.map((item) => (
+                  { eventsData.map((item,index) => (
                     <div
                       className="cursor-pointer w-[calc(100%/2)] lg:w-[calc(100%/3)] flex-shrink-0"
-                      key={item.id}
+                      key={index}
                       style={translate}
                     >
                       <img
-                        onClick={() => handleShowDetail(item.id)}
-                        src={item.url}
-                        alt={item.content}
+                        onClick={() => handleShowDetail(item._id)}
+                        src={`${ulrImgae}/src/uploads/${item.image}`}
+                        alt={item.description}
                         className="rounded-2xl w-full"
                       />
                     </div>

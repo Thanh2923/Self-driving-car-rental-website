@@ -99,7 +99,7 @@ const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await authService.getUserById(id);
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, data:[user] });
   } catch (error) {
     res.status(404).json({ success: false, message: error.message });
   }

@@ -24,7 +24,7 @@ const Page = () => {
               </div>
               <div className="name text-center">
                 <p className="text-[1.25rem] font-semibold text-black/60 motion-preset-slide-right motion-duration-1000 motion-delay-[500ms]">
-                  Nguyen Van Thanh
+              
                 </p>
               </div>
               <div className="join text-center">

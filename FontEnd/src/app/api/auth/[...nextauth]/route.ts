@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -24,7 +25,7 @@ export const authOptions: NextAuthOptions = {
         if (res.ok && data.token) {
           // Trả về user và token nếu đăng nhập thành công
           return {
-            id: data.user._id,
+            id: data.user.id,
             fullName: data.user.fullName,
             email: data.user.email,
             phone: data.user.phone,
@@ -48,21 +49,17 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = user.token; // Lưu accessToken vào token JWT
       }
       return token;
-
     },
     async session({ session, token }) {
-    
       // Lưu thông tin từ token vào session để trả về client
-      session.user.id = token.id;
+      session.user.id = token.id,
       session.user.fullName = token.fullName;
       session.user.email = token.email;
       session.user.phone = token.phone;
       session.user.role_id = token.role_id;
- 
-      session.token = token.accessToken;
       session.user.roleName = token.roleName;
 
- 
+      session.token = token.accessToken;
       return session;
     },
   },

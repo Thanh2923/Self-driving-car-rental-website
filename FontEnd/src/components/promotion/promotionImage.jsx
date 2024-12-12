@@ -6,6 +6,8 @@ const PromotionImage = ({ handleIsShow, content, imageUrl }) => {
     handleIsShow();
   };
 
+
+  const ulrImgae = process.env.NEXT_PUBLIC_API_IMAGE;
   const parentContent = (content) => {
     const lines = content.split("#");
     const result = [];
@@ -55,7 +57,7 @@ const PromotionImage = ({ handleIsShow, content, imageUrl }) => {
   // Inside your component
   const sanitizedContent = DOMPurify.sanitize(htmlContent);
   return (
-    <div className="fixed top-0 left-0 z-[100000] w-[100vw] h-[100vh]  bg-black/50">
+    <div className="fixed top-0 left-0 z-[100000]   bg-black/50">
       <div className="w-full p-[32px] lg:w-[50%] lg:mx-auto lg:mt-10  motion-preset-expand motion-duration-700 rounded-2xl bg-white shadow-xl">
         <CiCircleRemove
           onClick={handleHidden}
@@ -63,9 +65,9 @@ const PromotionImage = ({ handleIsShow, content, imageUrl }) => {
         />
         <div className="content-img">
           <img
-            src={imageUrl}
+           src={`${ulrImgae}/src/uploads/${imageUrl}`}
             alt="image"
-            className="rounded-2xl lg:w-[600px] mx-auto object-cover"
+            className="rounded-2xl lg:w-[300px] mx-auto object-cover"
           />
         </div>
         <div className="content-body p-[30px]">

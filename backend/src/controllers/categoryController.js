@@ -13,7 +13,7 @@ const createCategory = async (req, res) => {
 
 // Lấy tất cả danh mục
 const getAllCategories = async (req, res) => {
-    const { page = 1, limit = 5 } = req.query;
+    const { page , limit  } = req.query;
     try {
         const categories = await categoryService.getAllCategories(Number(page), Number(limit));
         return res.status(200).json(categories);

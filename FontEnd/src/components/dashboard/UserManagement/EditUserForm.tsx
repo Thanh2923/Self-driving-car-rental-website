@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const EditUserForm = ({ user, onSubmit, onCancel }) => {
+const EditUserForm = ({ session,user, onSubmit, onCancel }) => {
+  const isUser = session?.user.role_id ==="admin" ;
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -9,8 +10,6 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
     phone:'',
     role_id: "",
   });
-
-
   useEffect(() => {
     if (user) {
       setFormData({
@@ -68,7 +67,8 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
           required
         />
       </div>
-
+      
+      
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">Mật khẩu</label>
         <input
@@ -92,8 +92,8 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
-
-      <div>
+      {isUser ? 
+      (   <div>
         <label htmlFor="role_id" className="block text-sm font-medium text-gray-700">Vai trò</label>
         <select
           id="role_id"
@@ -104,7 +104,10 @@ const EditUserForm = ({ user, onSubmit, onCancel }) => {
         >
           <option value={formData.role_id._id}>{formData.role_id.roleName}</option>
         </select>
-      </div>
+      </div>)
+    : ""  
+    } 
+   
 
       <div className="flex py-5 justify-end space-x-4">
         <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md">Hủy</button>
