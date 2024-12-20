@@ -70,6 +70,9 @@ const EditBookingModal = ({ isOpen, onClose, booking, onConfirm }) => {
     onClose(); // Đóng modal
   };
 
+
+  const urlImage =process.env.NEXT_PUBLIC_API_IMAGE
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl w-3/3 text-center">
@@ -402,7 +405,7 @@ const Page = () => {
               </div>
               <div className="text-[1rem] w-[calc(100%-80%)] font-500 text-black/70 nameCar">
                 <img
-                  src={`${item.car_id.image[0]}`}
+                  src={`${urlImage}/${item.car_id.image[0]}`}
                   alt=""
                   className="w-12 m-auto h-12 rounded-xl"
                 />
